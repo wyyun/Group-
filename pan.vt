@@ -1,0 +1,45 @@
+setvar_size(h,type)
+	short h;
+	uchar type;
+{
+switch (type)
+	{
+
+		 /* PROC _init */
+	case 0:
+	 ct[h][1-first_tr[type]]=(struct ConfTag *)emalloc(2*sizeof(struct ConfTag));
+	 ct[h][2-first_tr[type]]=(struct ConfTag *)emalloc(2*sizeof(struct ConfTag));
+	 ct[h][3-first_tr[type]]=(struct ConfTag *)emalloc(2*sizeof(struct ConfTag));
+	 ct[h][4-first_tr[type]]=(struct ConfTag *)emalloc(2*sizeof(struct ConfTag));
+	 ct[h][5-first_tr[type]]=(struct ConfTag *)emalloc(1*sizeof(struct ConfTag));
+	break;
+
+		 /* PROC Y2 */
+	case 1:
+	 ct[h][6-first_tr[type]]=(struct ConfTag *)emalloc(3*sizeof(struct ConfTag));
+	 ct[h][7-first_tr[type]]=(struct ConfTag *)emalloc(1*sizeof(struct ConfTag));
+	break;
+
+		 /* PROC Y1 */
+	case 2:
+	 ct[h][8-first_tr[type]]=(struct ConfTag *)emalloc(3*sizeof(struct ConfTag));
+	 ct[h][9-first_tr[type]]=(struct ConfTag *)emalloc(3*sizeof(struct ConfTag));
+	 ct[h][10-first_tr[type]]=(struct ConfTag *)emalloc(1*sizeof(struct ConfTag));
+	break;
+
+		 /* PROC X2 */
+	case 3:
+	 ct[h][11-first_tr[type]]=(struct ConfTag *)emalloc(3*sizeof(struct ConfTag));
+	 ct[h][12-first_tr[type]]=(struct ConfTag *)emalloc(1*sizeof(struct ConfTag));
+	break;
+
+		 /* PROC X1 */
+	case 4:
+	 ct[h][13-first_tr[type]]=(struct ConfTag *)emalloc(3*sizeof(struct ConfTag));
+	 ct[h][14-first_tr[type]]=(struct ConfTag *)emalloc(3*sizeof(struct ConfTag));
+	 ct[h][15-first_tr[type]]=(struct ConfTag *)emalloc(1*sizeof(struct ConfTag));
+	break;
+
+	}
+}
+

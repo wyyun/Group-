@@ -1,0 +1,28 @@
+printvar()
+{
+int i;
+uchar *this;
+	printf("\nGLOBAL VARIABLES\n\n");
+	printf("now.x=%d\n",now.x);
+	printf("now.y=%d\n",now.y);
+	printf("\nLOCAL VARIABLES\n\n");
+	for(i=0;i<now._nr_pr;i++)
+	 {
+	  this = pptr(i);
+	  switch(((P0 *)this)->_t)
+	   {
+	   case 1:
+	      printf("\nProcess %d (Y2)\n\n",i);
+	   break;
+	   case 2:
+	      printf("\nProcess %d (Y1)\n\n",i);
+	   break;
+	   case 3:
+	      printf("\nProcess %d (X2)\n\n",i);
+	   break;
+	   case 4:
+	      printf("\nProcess %d (X1)\n\n",i);
+	   break;
+	   }
+	 }
+}

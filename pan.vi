@@ -1,0 +1,77 @@
+setvar_ind(f,h,type)
+	int f;
+	short h;
+	uchar type;
+{
+	enum{ nil,_var_timeout, x, y, First_queue};
+
+switch (f)
+	{
+
+		 /* PROC _init */
+	case  1: 
+			break;
+	case  2: 
+			break;
+	case  3: 
+			break;
+	case  4: 
+			break;
+	case  5: 
+			break;
+
+		 /* PROC Y2 */
+	case  6: 
+		if(now.y==(now.y+3))
+		(ct[h][6-first_tr[type]][0]).misc=0;
+		else
+		(ct[h][6-first_tr[type]][0]).misc=1;
+	break;
+	case  7: 
+			break;
+
+		 /* PROC Y1 */
+	case  8: 
+		if(now.y==(now.y+1))
+		(ct[h][8-first_tr[type]][0]).misc=0;
+		else
+		(ct[h][8-first_tr[type]][0]).misc=1;
+	break;
+	case  9: 
+		if(now.y==(now.y*2))
+		(ct[h][9-first_tr[type]][0]).misc=0;
+		else
+		(ct[h][9-first_tr[type]][0]).misc=1;
+	break;
+	case  10: 
+			break;
+
+		 /* PROC X2 */
+	case  11: 
+		if(now.x==(now.x+3))
+		(ct[h][11-first_tr[type]][0]).misc=0;
+		else
+		(ct[h][11-first_tr[type]][0]).misc=1;
+	break;
+	case  12: 
+			break;
+
+		 /* PROC X1 */
+	case  13: 
+		if(now.x==(now.x+1))
+		(ct[h][13-first_tr[type]][0]).misc=0;
+		else
+		(ct[h][13-first_tr[type]][0]).misc=1;
+	break;
+	case  14: 
+		if(now.x==(now.x+2))
+		(ct[h][14-first_tr[type]][0]).misc=0;
+		else
+		(ct[h][14-first_tr[type]][0]).misc=1;
+	break;
+	case  15: 
+			break;
+
+	}
+}
+

@@ -1,0 +1,19 @@
+is_rdv(t)
+	Trans *t;
+{
+	switch(t->forw)
+	{
+	
+		 /* PROC _init */
+	
+		 /* PROC Y2 */
+	
+		 /* PROC Y1 */
+	
+		 /* PROC X2 */
+	
+		 /* PROC X1 */
+	default:
+		return 0;
+	}
+}

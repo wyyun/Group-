@@ -1,0 +1,64 @@
+CT_cond(f)
+	int f;
+	enum{ nil,_var_timeout, x, y, First_queue};
+{
+switch (f)
+	{
+
+		 /* PROC _init */
+
+case 1:
+		(ct_g[0]).var=x;
+		(ct_g[0]).ind=0;
+		(ct_g[0]).type=2;
+		(ct_g[0]).var=x;
+		(ct_g[0]).ind=0;
+		(ct_g[0]).type=2;
+		(ct_g[1]).var=0;
+
+break;
+
+case 2:
+		(ct_g[1]).var=x;
+		(ct_g[1]).ind=0;
+		(ct_g[1]).type=2;
+		(ct_g[0]).var=x;
+		(ct_g[0]).ind=0;
+		(ct_g[0]).type=2;
+		(ct_g[1]).var=0;
+
+break;
+
+case 3:
+		(ct_g[1]).var=y;
+		(ct_g[1]).ind=0;
+		(ct_g[1]).type=2;
+		(ct_g[0]).var=y;
+		(ct_g[0]).ind=0;
+		(ct_g[0]).type=2;
+		(ct_g[1]).var=0;
+
+break;
+
+case 4:
+		(ct_g[1]).var=y;
+		(ct_g[1]).ind=0;
+		(ct_g[1]).type=2;
+		(ct_g[0]).var=y;
+		(ct_g[0]).ind=0;
+		(ct_g[0]).type=2;
+		(ct_g[1]).var=0;
+
+break;
+
+		 /* PROC Y2 */
+
+		 /* PROC Y1 */
+
+		 /* PROC X2 */
+
+		 /* PROC X1 */
+
+	}
+}
+
