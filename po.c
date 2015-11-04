@@ -41,47 +41,79 @@ wrapup()
     double a, b;
 
     printf("(%s)\n", Version);
+    fprintf(result,"(%s)\n", Version);
 #ifdef BITSTATE
     printf("bit statespace search ");
+    fprintf(result,"bit statespace search ");
 #else
     printf("full statespace search ");
+    fprintf(result,"full statespace search ");
 #endif
 #if !(defined BITSTATE) && !(defined PROV)
     printf("for:\n	invalid endstates");
+    fprintf(result,"for:\n	invalid endstates");
 #else
     printf("for:\n	assertion violations and invalid endstates");
+    fprintf(result,"for:\n	assertion violations and invalid endstates");
 #endif
-    if (!done) printf("\nsearch was not completed");
+    if (!done)
+    {
+        printf("\nsearch was not completed");
+        fprintf(result,"\nsearch was not completed");
+    }
     printf("\n\nvector %d byte, depth reached %d", hmax, mreached);
+    fprintf("result,\n\nvector %d byte, depth reached %d", hmax, mreached);
+
     printf(", errors: %d\n", errors);
+    fprintf(result,", errors: %d\n", errors);
 
 #ifdef BITSTATE
     printf("%8d states, visited\n", nstates);
-    printf("%8d states, matched	   total: %8d\n",
-            truncs, nstates+truncs);
+    fprintf(result,"%8d states, visited\n", nstates);
+
+    printf("%8d states, matched	   total: %8d\n",truncs, nstates+truncs);
+    fprintf(result,"%8d states, matched	   total: %8d\n",truncs, nstates+truncs);
 #else
     printf("%8d states, stored\n", nstates);
+    fprintf(result,"%8d states, stored\n", nstates);
+
     if(ncleared)
+    {
         printf("%8d states, cleared\n", ncleared);
-    printf("%8d states, matched	   total: %8d\n",
-            truncs, nstates+ncleared+truncs);
+        fprintf(result,"%8d states, cleared\n", ncleared);
+    }
+
+    printf("%8d states, matched	   total: %8d\n",truncs, nstates+ncleared+truncs);
+    fprintf(result,"%8d states, matched	   total: %8d\n",truncs, nstates+ncleared+truncs);
 #endif
 
     a = (double) (1<<ssize);
     b = (double) nstates_max+1.;
+
     printf("hash factor: %f ", a/b);
+    fprintf(result,"hash factor: %f ", a/b);
+
 #ifdef BITSTATE
     printf("(best coverage if >100)\n");
+    fprintf(result,"(best coverage if >100)\n");
+
 #else
-    printf("hash conflicts: %d (resolved) (%3.1f %%)\n",
-            hcmp,((double)hcmp/(double)nstates)*100);
+    printf("hash conflicts: %d (resolved) (%3.1f %%)\n",hcmp,((double)hcmp/(double)nstates)*100);
+    fprintf(result,"hash conflicts: %d (resolved) (%3.1f %%)\n",hcmp,((double)hcmp/(double)nstates)*100);
+
 #endif
     printf("(max size 2^%d states, ", ssize);
+    fprintf(result,"(max size 2^%d states, ", ssize);
+
 #ifdef HASHC
     printf("%d bits stored, ", bsize);
+    fprintf(result,"%d bits stored, ", bsize);
+
 #endif
 #ifdef MEMCNT
     printf("memory used: %d\n", memcnt);
+    fprintf(result,"memory used: %d\n", memcnt);
+
 #endif
     extern_wrapup(done);
     exit(0);
@@ -287,7 +319,10 @@ no_more_in_stack(p)
         return;
     n_++;
     if(((struct H_el *)p)->tagged!=0 )
+    {
         printf("bad stack-state\n");
+        fprintf(result,"bad stack-state\n");
+    }
     ((struct H_el *)p)->tagged =1;
 }
 /* #endif */
@@ -388,6 +423,7 @@ print_sleep(f)
         if(nb_trans_in_sleep>0)
         {
             printf("%d in s:",nb_trans_in_sleep);
+            fprintf(result,"%d in s:",nb_trans_in_sleep);
             for(i=0;i<nb_trans_in_sleep;i++)
                 PTRANS(cur_sleep[i]);
         }else
@@ -406,6 +442,7 @@ double_sleep()
 
 #ifdef DYNSTRUCTCONT
     printf("doubling sleep, newsiz=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
+    fprintf(result,"doubling sleep, newsiz=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
 #endif
     tmppt = (TRANS **)erealloc(cur_sleep,newsize*sizeof(TRANS *),
             MAX_SLEEP*sizeof(TRANS *));
@@ -513,8 +550,14 @@ caching(n)
     if(!caching_flag)
     {
         printf("State Space Caching...\n");
+        fprintf(result,"State Space Caching...\n");
+
         printf("WARNING: With bitstate, states of the depth first stack can be deleted,\n");
+        fprintf(result,"WARNING: With bitstate, states of the depth first stack can be deleted,\n");
+
         printf("termination is no more guaranteed...\n");
+        fprintf(result,"termination is no more guaranteed...\n");
+
         caching_flag=1;
     }
 
@@ -547,6 +590,7 @@ caching()
     if(!caching_flag)
     {
         printf("State Space Caching...\n");
+        fprintf(result,"State Space Caching...\n");
         caching_flag=1;
     }
     if(n_< nstates/2)
@@ -554,9 +598,16 @@ caching()
         {
             stack_flag=1;
             printf("WARNING: Most of the stored states are in the depth-first search stack,\n");
+            fprintf(result,"WARNING: Most of the stored states are in the depth-first search stack,\n");
+
             printf("and won't be removed from the cache...\n");
+            fprintf(result,"and won't be removed from the cache...\n");
+
             printf("If possible, use a larger <cache_size> in pan -n<cache_size>\n");
+            fprintf(result,"If possible, use a larger <cache_size> in pan -n<cache_size>\n");
+
             printf("In any case, the search continues...\n");
+            fprintf(result,"In any case, the search continues...\n");
         }
     if(n_==0)
     {
@@ -1017,13 +1068,18 @@ select_transitions(int select_flag,short *k_par,int flag_par)
         size=0;
         //wyy_beg
         printf("2222\n");
+        fprintf(result,"2222\n");
+
         do{
             II=Pst[--Ppt];
             //wyy_beg
             printf("Pst[%d]=%hd\t",Pst,II);
+            fprintf(result,"Pst[%d]=%hd\t",Pst,II);
             P_1=Tab[II];
             //wyy_beg
             printf("Tab[%d]=%hd\n",II,Tab[II]);
+            fprintf(result,"Tab[%d]=%hd\n",II,Tab[II]);
+
             memset((char *)P_1,0,nb*sizeof(short));
 
             set(P,II);
@@ -1130,9 +1186,16 @@ Sel:
                         {
                             *(++stpt)=trans_def[II][i].tr;
                             printf("trans_def[%d][%d]:%s\t",II,i,trans_def[II][i].tr->n.tr->tp);
+                            fprintf(result,"trans_def[%d][%d]:%s\t",II,i,trans_def[II][i].tr->n.tr->tp);
+
                             printf("stpt:%s,stpt_ind:%d\t",(*stpt)->n.tr->tp,stpt_ind);
+                            fprintf(result,"stpt:%s,stpt_ind:%d\t",(*stpt)->n.tr->tp,stpt_ind);
+
                             printf("type:%d,",(*stpt)->n.type);
+                            fprintf(result,"type:%d,",(*stpt)->n.type);
+
                             printf("select_flag=0\n");
+                            fprintf(result,"select_flag=0\n");
                             k++;
                             stpt_ind++;
                         }
@@ -1161,13 +1224,21 @@ Sel:
                                  }
                                  */
                                 printf("trans_def[%d][%d]:%s, ",II,i,trans_def[II][i].tr->n.tr->tp);
+                                fprintf(result,"trans_def[%d][%d]:%s, ",II,i,trans_def[II][i].tr->n.tr->tp);
+
                                 printf("stpt_par[%d]:%s, ",ggid,(*(stpt_par[ggid]))->n.tr->tp);
+                                fprintf(result,"stpt_par[%d]:%s, ",ggid,(*(stpt_par[ggid]))->n.tr->tp);
+
                                 printf("type:%d, ",(*(stpt_par[ggid]))->n.type);
+                                fprintf(result,"type:%d, ",(*(stpt_par[ggid]))->n.type);
                                 k_par[ggid]++;
                                 printf("k=%d, ",k_par[ggid]);
+                                fprintf(result,"k=%d, ",k_par[ggid]);
                                 stpt_ind_para[ggid]++;
                                 printf("stpt_ind_para[%d]:%d, ",ggid,stpt_ind_para[ggid]);
+                                fprintf(result,"stpt_ind_para[%d]:%d, ",ggid,stpt_ind_para[ggid]);
                                 printf("select_flag=1\n");
+                                fprintf(result,"select_flag=1\n");
                             }
                         }
 #ifdef GROUP
@@ -1179,6 +1250,7 @@ Sel:
     // print_stpt(trans_def);//print the trans_def's elements
     // print();
     printf("\n");
+    fprintf(result,"\n");
     if(!select_flag)
         return k;
     return k;
@@ -1274,9 +1346,13 @@ select_transitions_par(int select_flag,short *k_par,int flag_par)
 #endif
     k_par[0]=0;k_par[1]=0;
     printf("*****************before******************\n");
+    fprintf(result,"*****************before******************\n");
+
     if(!trans_def_in(flag_par))//置trans_def[][]元素值
         return 0;
     printf("****************end**********************\n");
+    fprintf(result,"****************end**********************\n");
+
     //wyy_beg
     // printf("\nnb=%d\n",nb_proc()-1);
     //wyy_end
@@ -1349,13 +1425,16 @@ select_transitions_par(int select_flag,short *k_par,int flag_par)
         size=0;
         //wyy_beg
         printf("2222\n");
+        fprintf(result,"2222\n");
         do{
             II=Pst[--Ppt];
             //wyy_beg
             printf("Pst[%d]=%hd\t",Pst,II);
+            fprintf(result,"Pst[%d]=%hd\t",Pst,II);
             P_1=Tab[II];
             //wyy_beg
             printf("Tab[%d]=%hd\n",II,Tab[II]);
+            fprintf(result,"Tab[%d]=%hd\n",II,Tab[II]);
             memset((char *)P_1,0,nb*sizeof(short));
 
             set(P,II);
@@ -1493,13 +1572,19 @@ Sel:
                            }
                         */
                             printf("trans_def[%d][%d]:%s, ",II,i,trans_def[II][i].tr->n.tr->tp);
+                            fprintf(result,"trans_def[%d][%d]:%s, ",II,i,trans_def[II][i].tr->n.tr->tp);
                             printf("stpt_par[%d]:%s, ",ggid,(*(stpt_par[ggid]))->n.tr->tp);
+                            fprintf(result,"stpt_par[%d]:%s, ",ggid,(*(stpt_par[ggid]))->n.tr->tp);
                             printf("type:%d, ",(*(stpt_par[ggid]))->n.type);
+                            fprintf(result,"type:%d, ",(*(stpt_par[ggid]))->n.type);
                             k_par[ggid]++;
                             printf("k=%d, ",k_par[ggid]);
+                            fprintf(result,"k=%d, ",k_par[ggid]);
                             stpt_ind_para[ggid]++;
                             printf("stpt_ind_para[%d]:%d, ",ggid,stpt_ind_para[ggid]);
+                            fprintf(result,"stpt_ind_para[%d]:%d, ",ggid,stpt_ind_para[ggid]);
                             printf("select_flag=1\n");
+                            fprintf(result,"select_flag=1\n");
                     }
 #ifdef GROUP
                     }
@@ -1508,6 +1593,7 @@ Sel:
             }
     }
     printf("\n");
+    fprintf(result,"\n");
     /*
     if(nb_proc()-1 == sum)
     {
@@ -1529,6 +1615,7 @@ copy_stpt()
         {
             *(++stpt) = *stpt_par[i];
             printf("stpt:,%d\n",*stpt,stpt);
+            fprintf(result,"stpt:,%d\n",*stpt,stpt);
             stpt_ind++;
             stpt_par[i]++;
         }
@@ -1572,6 +1659,7 @@ new_state_PO()
         if (!(fo=fopen("foutput","w")))
         {
             printf("cannot create foutput");
+            fprintf(result,"cannot create foutput");
             exit(1);
         }
     #endif
@@ -1588,6 +1676,7 @@ Down:
                 if(!depth_flag)
                 {
                     printf("maxdepth is too small, the search will be truncated\n");
+                    fprintf(result,"maxdepth is too small, the search will be truncated\n");
                     depth_flag=1;
                 }
                 truncs++;
@@ -1595,6 +1684,7 @@ Down:
             }
         }
         printf("Down\n");
+        fprintf(result,"Down\n");
         int temp = hstore(addr_current_state(), vsize);
         /*#ifdef GROUP
           if(match_now(53,1,1))
@@ -1614,9 +1704,11 @@ Down:
                 //insert_trace("hstore return 1",depth,dfs_stpt);
 #ifdef DB
                 printf("depth%d: trace is truncated by state equivalence:\n",depth);
+                fprintf(result,"depth%d: trace is truncated by state equivalence:\n",depth);
                 print_now();
 #endif
                 printf("Down:case1\n");
+                fprintf(result,"Down:case1\n");
                 goto Up;
                 break;
             case 2: //this case hasn't happen till now
@@ -1628,6 +1720,7 @@ Down:
             case 0:
                 nstates++; //nstates is unique during dfs
                 printf("Down:case0\n");
+                fprintf(result,"Down:case0\n");
 
 #ifdef GROUP
                 increase_redundant();
@@ -1647,6 +1740,7 @@ Down:
         if(dfs_group->compressed)
         {
             printf("Down:dfs_group->compressed\n");
+            fprintf(result,"Down:dfs_group->compressed\n");
             goto Up;
         }
 #endif
@@ -1686,16 +1780,16 @@ Again:
                 }
                 else
                 {
-                /*    transfer();
-                    n = select_transitions();
-                    if(n == 0)
-                    {
-                        goto End;
-                    }else
-                    {}
-                   // copy_stpt();*/
-                   select_flag = 0;
-                   goto End;
+                    /*    transfer();
+                          n = select_transitions();
+                          if(n == 0)
+                          {
+                          goto End;
+                          }else
+                          {}
+                    // copy_stpt();*/
+                    select_flag = 0;
+                    goto End;
                 }
             }else
             {
@@ -1713,6 +1807,7 @@ Again:
         {
 Downagain:
             printf("Downagain\n");
+            fprintf(result,"Downagain\n");
 #ifdef SHOW
             /*if(++step>NB_STEP)
               {
@@ -1737,6 +1832,7 @@ Downagain:
 #endif
             execute(t,fo,-1);
             printf("\nexecute:%s\n",t->n.tr->tp);
+            fprintf(result,"\nexecute:%s\n",t->n.tr->tp);
 #ifdef GROUP
             switch(dfs_group->active_gid)
             {
@@ -1769,6 +1865,7 @@ Downagain:
             dfs_stpt->branch = n - 1;
             //wyy_beg
             printf("Downagain:dfs_stpt:%s,branch=%d\n",dfs_stpt->tr->n.tr->tp,dfs_stpt->branch);
+            fprintf(result,"Downagain:dfs_stpt:%s,branch=%d\n",dfs_stpt->tr->n.tr->tp,dfs_stpt->branch);
             //wyy_end
             dfs_stpt++;
             goto Down;
@@ -1779,11 +1876,14 @@ Downagain:
         if(select_flag)//select_flag=1
         {
             omp_set_num_threads(NUM_THREADS);
-#pragma omp parallel reduction(+:depth,truncs,state_count,trace_count_equivalent,nstates,trace_count_sleep,trace_count_end)
+#pragma omp parallel for reduction(+:depth,truncs,state_count,trace_count_equivalent,nstates,trace_count_sleep,trace_count_end)
+            for(nid = 0 ; nid < NUM_THREADS ; nid++)
             {
+
 Downagain_par:
-                nid = omp_get_thread_num();
+                //nid = omp_get_thread_num();
                 printf("Downagain_par:nid = %d\n",nid);
+                fprintf(result,"Downagain_par:nid = %d\n",nid);
                 if(stpt_par[nid])
                 {
                     tt=stpt_par[nid];
@@ -1799,7 +1899,9 @@ Downagain_par:
                     execute(t,fo,nid);
                     //execute(t,fo,-1);
                     printf("\nexecute:%s\n",t->n.tr->tp);
+                    fprintf(result,"\nexecute:%s\n",t->n.tr->tp);
                     printf("stpt_ind_para[%d] = %d\n",nid,stpt_ind_para[nid]);
+                    fprintf(result,"stpt_ind_para[%d] = %d\n",nid,stpt_ind_para[nid]);
 #ifdef GROUP
                     switch(dfs_group->active_gid)
                     {
@@ -1816,11 +1918,6 @@ Downagain_par:
                             break;
                     }
 #endif
-                    /*
-#ifdef GROUP
-refresh(t,dfs_stpt_par[nid]);
-#endif
-*/
                     cache_flag=1;
 
                     depth++;
@@ -1834,13 +1931,15 @@ refresh(t,dfs_stpt_par[nid]);
 #endif
 
                     dfs_stpt_par[nid]->branch = n_par[nid]-1;
-            //        printf("dfs_stpt_par[%d]:%d\n",dfs_stpt_par[nid]);
+                    //        printf("dfs_stpt_par[%d]:%d\n",dfs_stpt_par[nid]);
                     printf("dfs_stpt_par[%d]:%s,branch=%d\n",nid,dfs_stpt_par[nid]->tr->n.tr->tp,dfs_stpt_par[nid]->branch);
+                    fprintf(result,"dfs_stpt_par[%d]:%s,branch=%d\n",nid,dfs_stpt_par[nid]->tr->n.tr->tp,dfs_stpt_par[nid]->branch);
                     dfs_stpt_par[nid]++;
                     goto Down_par;
 
 Down_par:
                     printf("\nDown_par:nid = %d\n",nid);
+                    fprintf(result,"\nDown_par:nid = %d\n",nid);
                     if (depth >= maxdepth)
                     {
                         int double_dfs = double_dfs_stack();
@@ -1849,6 +1948,7 @@ Down_par:
                             if(!depth_flag)
                             {
                                 printf("maxdepth is too small, the search will be truncated\n");
+                                fprintf(result,"maxdepth is too small, the search will be truncated\n");
                                 depth_flag=1;
                             }
                             truncs++;
@@ -1866,6 +1966,7 @@ Down_par:
                             //insert_trace("hstore return 1",depth,dfs_stpt);
 #ifdef DB
                             printf("depth%d: trace is truncated by state equivalence:\n",depth);
+                            fprintf(result,"depth%d: trace is truncated by state equivalence:\n",depth);
                             print_now();
 #endif
                             goto Up_par;
@@ -1898,321 +1999,657 @@ Down_par:
                         goto Up_par;
 #endif
 #endif
-                }
+                }//end if(stpt_par[nid]if()
 
 Again_par:
-                printf("\nAgain_par:nid = %d\n",nid);
+                    printf("\nAgain_par:nid = %d\n",nid);
+                    fprintf(result,"\nAgain_par:nid = %d\n",nid);
 #pragma omp barrier
 #pragma omp master
-//                if(nid == 0)
-                {
+                    //                if(nid == 0)
+                    {
 #pragma omp critical
-                    {
-                        printf("before select_transitions_par,nid == %d\n",nid);
-                        //select_transitions_par(select_flag,n_par,nid);
-                        select_transitions_par(select_flag,n_par,-1);
-                        printf("end select_transitions_par,nid == %d\n",nid);
-
-                    }
-                }
-
-#pragma omp barrier
-#ifdef GROUP
-                if(n_par[nid]==0)
-                {
-                    if(nb_trans_in_sleep==0)
-                    {
-                        if(dfs_group->compressed==0)
                         {
-                            switch(dfs_group->active_gid)
-                            {
-                                case 0:
-                                    endstate_count[0]++;
-                                    break;
-                                case 1:
-                                    endstate_count[1]++;
-                                    break;
-                                case 2:
-                                    endstate_count[2]++;
-                                    break;
-                            }
+                            printf("before select_transitions_par,nid == %d\n",nid);
+                            fprintf(result,"before select_transitions_par,nid == %d\n",nid);
+                            //select_transitions_par(select_flag,n_par,nid);
+                            select_transitions_par(select_flag,n_par,-1);
+                            printf("end select_transitions_par,nid == %d\n",nid);
+                            fprintf(result,"end select_transitions_par,nid == %d\n",nid);
+
                         }
                     }
-                    goto End_par;
+            //}//end if(stpt_par[nid])
+
+
+#pragma omp barrier
+#ifdef GROUP
+            if(n_par[nid]==0)
+            {
+                if(nb_trans_in_sleep==0)
+                {
+                    if(dfs_group->compressed==0)
+                    {
+                        switch(dfs_group->active_gid)
+                        {
+                            case 0:
+                                endstate_count[0]++;
+                                break;
+                            case 1:
+                                endstate_count[1]++;
+                                break;
+                            case 2:
+                                endstate_count[2]++;
+                                break;
+                        }
+                    }
                 }
+                goto End_par;
+            }
 #else
-                if(n_par[nid]==0)
-                    goto End_par;
+            if(n_par[nid]==0)
+                goto End_par;
 #endif
-                goto Downagain_par;
+            goto Downagain_par;
 End_par:
-                //wyy_beg
-               // char *add = addr_current_state();
-                printf("\nEnd_par:nid = %d\n",nid);
-                if(nb_trans_in_sleep>0)
-                {
-                    trace_count_sleep++;
+            //wyy_beg
+            // char *add = addr_current_state();
+            printf("\nEnd_par:nid = %d\n",nid);
+            fprintf(result,"\nEnd_par:nid = %d\n",nid);
+            if(nb_trans_in_sleep>0)
+            {
+                trace_count_sleep++;
 #ifdef DB
-                    printf("depth%d: trace is truncated by sleep set:\n",depth);
-                    print_now();
+                printf("depth%d: trace is truncated by sleep set:\n",depth);
+                fprintf(result,"depth%d: trace is truncated by sleep set:\n",depth);
+                print_now();
 #endif
-                }else
+            }else
+            {
+                trace_count_end++;
+                // #ifdef GROUP
+                //  amend_redundant();
+                //#endif
+                //
+#ifdef DB
+                printf("depth%d: trace reaches end:\n",depth);
+                fprintf(result,"depth%d: trace reaches end:\n",depth);
+                print_now();
+#endif
+            }
+#ifdef SLEEP
+            if(nb_trans_in_sleep > 0)
+            {
+                printf("nb_trans_in_sleep>0\t");
+                fprintf(result,"nb_trans_in_sleep>0\t");
+                goto Up_par;
+            }
+#endif
+            //  goto Up_par;
+Up_par:
+            printf("\nUp_par:nid = %d\n",nid);
+            fprintf(result,"\nUp_par:nid = %d\n",nid);
+
+            /* nid = omp_get_thread_num(); */
+
+            //printf("************End_par:nid=%d\n",nid);
+            //                if(nid == 0)
+#pragma omp barrier
+#pragma omp master
+            {
+                if (depth > 0)
                 {
-                    trace_count_end++;
-                    /*#ifdef GROUP
-                      amend_redundant();
+                    int i;
+                    select_flag = 0;//select_flag = 0;
+                    select_par = 0;
+                    for(i = 0 ; i<NUM_THREADS ; i++)//copy the group dfs_stpt_par to the dfs_stpt
+                    {
+                        int k = 0;
+                        dfs_stpt_par[i]--;
+                        while(dfs_stpt_par[i]->tr)
+                        {
+                            dfs_stpt_cp++;
+                            k++;
+                            dfs_stpt_cp = dfs_stpt_par[i];
+                            printf("k = %d,dfs_stpt_par:%s,branch = %d\n",k,dfs_stpt_par[i]->tr->n.tr->tp,dfs_stpt_par[i]->branch);
+                            fprintf(result,"k = %d,dfs_stpt_par:%s,branch = %d\n",k,dfs_stpt_par[i]->tr->n.tr->tp,dfs_stpt_par[i]->branch);
+                            dfs_stpt_par[i]--;
+                        }
+                        while(k)//instore the dfs_stpt_par[i],and fresh thr sleep set
+                        {
+                            *dfs_stpt = *dfs_stpt_cp;
+                            dfs_stpt->tr = dfs_stpt_cp->tr;
+                            dfs_stpt->l = dfs_stpt_cp->l;
+                            dfs_stpt->m = dfs_stpt_cp->m;
+                            dfs_stpt->branch = dfs_stpt_cp->branch;
+                            dfs_stpt->hashp = dfs_stpt_cp->hashp;
+                            t = (dfs_stpt)->tr;
+                            printf("loopdfs = %d,End_par:dfs_stpt:%s\t",k,t->n.tr->tp);
+                            fprintf(result,"loopdfs = %d,End_par:dfs_stpt:%s\t",k,t->n.tr->tp);
+                            rm_tr_confl(t);
+#ifdef GROUP
+
+                            refresh(t,dfs_stpt);
+#endif
+                            dfs_stpt_cp++;
+                            k--;
+                            dfs_stpt++;
+                        }
+                        printf("\n");
+                        fprintf(result,"\n");
+
+                        k = 0;
+                        while((*stpt_par[i]))//instore the left elements in stpt_par[i]
+                        {
+                            k++;
+                            stpt++;
+                            printf("stpt_par[%d]:%p,%s\n",i,stpt_par[i],(*stpt_par[i])->n.tr->tp);
+                            fprintf(result,"stpt_par[%d]:%p,%s\n",i,stpt_par[i],(*stpt_par[i])->n.tr->tp);
+                            // (*stpt)->n = (*stpt_par[i])->n;
+                            (*stpt) = (*stpt_par[i]);
+                            //
+                            //     (*stpt)->n.tr = (*stpt_par[i])->n.tr;
+                            //     (*stpt)->n.pr = (*stpt_par[i])->n.pr;
+                            //     (*stpt)->n.type = (*stpt_par[i])->n.type;
+
+                            printf("loopstpt = %d,End_par:stpt:%s,",k,(*stpt)->n.tr->tp);
+                            fprintf(result,"loopstpt = %d,End_par:stpt:%s,",k,(*stpt)->n.tr->tp);
+                            stpt_par[i]--;
+                        }
+                        printf("\n");
+                        fprintf(result,"\n");
+                        //wyy_beg
+                        char *add = addr_current_state();
+                        deleted_trail(i);
+                    }//end for
+                    copy_trail(num_group);
+                }//end depth>0
+            }//end critical
+        }//end for
+/* goto Up;
+   break; */
+}//endif select_flag = 1
+
+/* {
+Downagain_par:
+nid = omp_get_thread_num();
+printf("Downagain_par:nid = %d\n",nid);
+fprintf(result,"Downagain_par:nid = %d\n",nid);
+if(stpt_par[nid])
+{
+tt=stpt_par[nid];
+t = *tt;
+(stpt_par[nid])--;
+stpt_ind_para[nid]--;
+#ifdef SLEEP
+dfs_stpt_par[nid]->l=lptr;
+dfs_stpt_par[nid]->m=mptr;
+
+//rm_tr_confl(t);
+#endif
+execute(t,fo,nid);
+//execute(t,fo,-1);
+printf("\nexecute:%s\n",t->n.tr->tp);
+fprintf(result,"\nexecute:%s\n",t->n.tr->tp);
+printf("stpt_ind_para[%d] = %d\n",nid,stpt_ind_para[nid]);
+fprintf(result,"stpt_ind_para[%d] = %d\n",nid,stpt_ind_para[nid]);
+#ifdef GROUP
+switch(dfs_group->active_gid)
+{
+case 0:
+visitedstate_count[0]++;
+break;
+case 1:
+if(dfs_group->compressed==0)
+visitedstate_count[1]++;
+break;
+case 2:
+if(dfs_group->compressed==0)
+visitedstate_count[2]++;
+break;
+}
+#endif */
+/*
+#ifdef GROUP
+refresh(t,dfs_stpt_par[nid]);
 #endif
 */
-#ifdef DB
-                    printf("depth%d: trace reaches end:\n",depth);
-                    print_now();
-#endif
-                }
+/* cache_flag=1;
+
+   depth++;
+   dfs_stpt_par[nid]->tr=t;
+   dfs_stpt_par[nid]->hashp=0;
+
 #ifdef SLEEP
-                if(nb_trans_in_sleep > 0)
-                {
-                    printf("nb_trans_in_sleep>0\t");
-                    goto Up_par;
-                }
+#ifdef OUT
+//print_sleep(fo);
 #endif
-              //  goto Up_par;
+#endif
+
+dfs_stpt_par[nid]->branch = n_par[nid]-1;
+//        printf("dfs_stpt_par[%d]:%d\n",dfs_stpt_par[nid]);
+printf("dfs_stpt_par[%d]:%s,branch=%d\n",nid,dfs_stpt_par[nid]->tr->n.tr->tp,dfs_stpt_par[nid]->branch);
+fprintf(result,"dfs_stpt_par[%d]:%s,branch=%d\n",nid,dfs_stpt_par[nid]->tr->n.tr->tp,dfs_stpt_par[nid]->branch);
+dfs_stpt_par[nid]++;
+goto Down_par;
+
+Down_par:
+printf("\nDown_par:nid = %d\n",nid);
+fprintf(result,"\nDown_par:nid = %d\n",nid);
+if (depth >= maxdepth)
+{
+int double_dfs = double_dfs_stack();
+if(!double_dfs)
+{
+if(!depth_flag)
+{
+printf("maxdepth is too small, the search will be truncated\n");
+fprintf(result,"maxdepth is too small, the search will be truncated\n");
+depth_flag=1;
+}
+truncs++;
+goto Up_par;
+}
+}
+
+int temp = hstore(addr_current_state(), vsize);
+state_count++;
+switch(temp)
+{
+case 1:
+truncs++;
+trace_count_equivalent++;
+//insert_trace("hstore return 1",depth,dfs_stpt);
+#ifdef DB
+printf("depth%d: trace is truncated by state equivalence:\n",depth);
+fprintf(result,"depth%d: trace is truncated by state equivalence:\n",depth);
+print_now();
+#endif
+goto Up_par;
+break;
+case 2: //this case hasn't happen till now
+truncs++;
+#ifdef SLEEP
+sleep_mismatch=1;
+#endif
+break;
+case 0:
+nstates++; //nstates is unique during dfs
+
+#ifdef GROUP
+increase_redundant();
+#endif
+if(MAX_STATES && nstates > MAX_STATES)
+caching();
+if(nstates > nstates_max)
+nstates_max = nstates;
+break;
+default:
+Uerror("Bad type returned by hstore\n");
+}
+if (depth > mreached)
+    mreached = depth;
+#ifdef GROUP
+#ifdef TIME
+if(dfs_group->compressed)
+    goto Up_par;
+#endif
+#endif
+    //}//end if(stpt_par[nid]if()
+
+Again_par:
+printf("\nAgain_par:nid = %d\n",nid);
+fprintf(result,"\nAgain_par:nid = %d\n",nid);
+#pragma omp barrier
+#pragma omp master
+//                if(nid == 0)
+{
+#pragma omp critical
+    {
+        printf("before select_transitions_par,nid == %d\n",nid);
+        fprintf(result,"before select_transitions_par,nid == %d\n",nid);
+        //select_transitions_par(select_flag,n_par,nid);
+        select_transitions_par(select_flag,n_par,-1);
+        printf("end select_transitions_par,nid == %d\n",nid);
+        fprintf(result,"end select_transitions_par,nid == %d\n",nid);
+
+    }
+}
+}//end if(stpt_par[nid]if()
+
+
+#pragma omp barrier
+#ifdef GROUP
+if(n_par[nid]==0)
+{
+    if(nb_trans_in_sleep==0)
+    {
+        if(dfs_group->compressed==0)
+        {
+            switch(dfs_group->active_gid)
+            {
+                case 0:
+                    endstate_count[0]++;
+                    break;
+                case 1:
+                    endstate_count[1]++;
+                    break;
+                case 2:
+                    endstate_count[2]++;
+                    break;
+            }
+        }
+    }
+    goto End_par;
+}
+#else
+if(n_par[nid]==0)
+    goto End_par;
+#endif
+    goto Downagain_par;
+End_par:
+//wyy_beg
+// char *add = addr_current_state();
+printf("\nEnd_par:nid = %d\n",nid);
+fprintf(result,"\nEnd_par:nid = %d\n",nid);
+if(nb_trans_in_sleep>0)
+{
+    trace_count_sleep++;
+#ifdef DB
+    printf("depth%d: trace is truncated by sleep set:\n",depth);
+    fprintf(result,"depth%d: trace is truncated by sleep set:\n",depth);
+    print_now();
+#endif
+}else
+{
+    trace_count_end++;
+    // #ifdef GROUP
+    //  amend_redundant();
+    //#endif
+    //
+#ifdef DB
+    printf("depth%d: trace reaches end:\n",depth);
+    fprintf(result,"depth%d: trace reaches end:\n",depth);
+    print_now();
+#endif
+}
+#ifdef SLEEP
+if(nb_trans_in_sleep > 0)
+{
+    fprintf(result,"nb_trans_in_sleep>0\t");
+    goto Up_par;
+}
+#endif
+//  goto Up_par;
 Up_par:
-                printf("\nUp_par:nid = %d\n",nid);
-                nid = omp_get_thread_num();
-                //printf("************End_par:nid=%d\n",nid);
+printf("\nUp_par:nid = %d\n",nid);
+fprintf(result,"\nUp_par:nid = %d\n",nid);
+nid = omp_get_thread_num();
+//printf("************End_par:nid=%d\n",nid);
 //                if(nid == 0)
 #pragma omp barrier
 #pragma omp master
-                {
-                    if (depth > 0)
-                    {
-                        int i=0;
-                        select_flag = 0;//select_flag = 0;
-                        select_par = 0;
-                        for(;i<NUM_THREADS;i++)//copy the group dfs_stpt_par to the dfs_stpt
-                        {
-                            int k = 0;
-                            dfs_stpt_par[i]--;
-                            while(dfs_stpt_par[i]->tr)
-                            {
-                                dfs_stpt_cp++;
-                                k++;
-                                dfs_stpt_cp = dfs_stpt_par[i];
-                                printf("k = %d,dfs_stpt_par:%s,branch = %d\n",k,dfs_stpt_par[i]->tr->n.tr->tp,dfs_stpt_par[i]->branch);
-                                dfs_stpt_par[i]--;
-                            }
-                            while(k)//instore the dfs_stpt_par[i],and fresh thr sleep set
-                            {
-                                *dfs_stpt = *dfs_stpt_cp;
-                                dfs_stpt->tr = dfs_stpt_cp->tr;
-                                dfs_stpt->l = dfs_stpt_cp->l;
-                                dfs_stpt->m = dfs_stpt_cp->m;
-                                dfs_stpt->branch = dfs_stpt_cp->branch;
-                                dfs_stpt->hashp = dfs_stpt_cp->hashp;
-                                t = (dfs_stpt)->tr;
-                                printf("loopdfs = %d,End_par:dfs_stpt:%s\t",k,t->n.tr->tp);
-                                rm_tr_confl(t);
-#ifdef GROUP
-
-                                refresh(t,dfs_stpt);
-#endif
-                                dfs_stpt_cp++;
-                                k--;
-                                dfs_stpt++;
-                            }
-                            printf("\n");
-
-                            k = 0;
-                            while((*stpt_par[i]))//instore the left elements in stpt_par[i]
-                            {
-                                k++;
-                                stpt++;
-                                printf("stpt_par[%d]:%d,%s\n",i,stpt_par[i],(*stpt_par[i])->n.tr->tp);
-                               // (*stpt)->n = (*stpt_par[i])->n;
-                                (*stpt) = (*stpt_par[i]);
-                               /*
-                                    (*stpt)->n.tr = (*stpt_par[i])->n.tr;
-                                    (*stpt)->n.pr = (*stpt_par[i])->n.pr;
-                                    (*stpt)->n.type = (*stpt_par[i])->n.type;*/
-
-                                printf("loopstpt = %d,End_par:stpt:%s,",k,(*stpt)->n.tr->tp);
-                                stpt_par[i]--;
-                            }
-                            printf("\n");
-                            //wyy_beg
-                            char *add = addr_current_state();
-                            deleted_trail(i);
-                        }//end for
-                        copy_trail(num_group);
-                    }//end depth>0
-                }//end critical
-            }//end pragma
-            goto Up;
-        }//endif select_flag = 1
-Up:
-        printf("Up\n");
-        if(depth == 0)
+{
+    if (depth > 0)
+    {
+        int i;
+        select_flag = 0;//select_flag = 0;
+        select_par = 0;
+        for(i = 0 ; i<NUM_THREADS ; i++)//copy the group dfs_stpt_par to the dfs_stpt
         {
-#ifdef WARAPUP
-            trace_count_total = trace_count_equivalent + trace_count_sleep + trace_count_end;
-#ifdef GROUP
-            printf("state redundant = %d\n",state_redundant);
-            expectedtrace_count += trace_count_total;
-
-            //calculate expected state count
-            int i = 0;
-            int j;
-            for(; i<num_group; i++)
+            int k = 0;
+            dfs_stpt_par[i]--;
+            while(dfs_stpt_par[i]->tr)
             {
-                expectedtrace_count += visitedstate_count[i];
-                int series = 1;
-                if(i < (num_group - 1))
-                {
-                    series = endstate_count[i] - 1;
-                    for(j = i+1;j<num_group;j++)
-                    {
-                        series *= endstate_count[j];
-                    }
-                    printf("i = %d,series = %d\n",i,series);
-                    expectedtrace_count += series * (num_group-i-1);
-                    expectedtrace_count += series;
-                    trace_count_compressed += series;
-                }
+                dfs_stpt_cp++;
+                k++;
+                dfs_stpt_cp = dfs_stpt_par[i];
+                printf("k = %d,dfs_stpt_par:%s,branch = %d\n",k,dfs_stpt_par[i]->tr->n.tr->tp,dfs_stpt_par[i]->branch);
+                fprintf(result,"k = %d,dfs_stpt_par:%s,branch = %d\n",k,dfs_stpt_par[i]->tr->n.tr->tp,dfs_stpt_par[i]->branch);
+                dfs_stpt_par[i]--;
             }
-            printf("expectedtrace_count = %d\n",expectedtrace_count);
-            printf("trace count:total=%d,equivalent=%d,sleep=%d,end=%d,compressed=%d\n\n", \
-                    trace_count_total,trace_count_equivalent,trace_count_sleep,trace_count_end \
-                    trace_count_compressed);
-            printf("visited state count:");
-            for(i = 0;i<num_group;i++)
+            while(k)//instore the dfs_stpt_par[i],and fresh thr sleep set
             {
-                printf("\nvisitedstate_count[%d]=%d ",i,visitedstate_count[i]);
-                total_visitedstate_count += visitedstate_count[i];
+                *dfs_stpt = *dfs_stpt_cp;
+                dfs_stpt->tr = dfs_stpt_cp->tr;
+                dfs_stpt->l = dfs_stpt_cp->l;
+                dfs_stpt->m = dfs_stpt_cp->m;
+                dfs_stpt->branch = dfs_stpt_cp->branch;
+                dfs_stpt->hashp = dfs_stpt_cp->hashp;
+                t = (dfs_stpt)->tr;
+                printf("loopdfs = %d,End_par:dfs_stpt:%s\t",k,t->n.tr->tp);
+                fprintf(result,"loopdfs = %d,End_par:dfs_stpt:%s\t",k,t->n.tr->tp);
+                rm_tr_confl(t);
+#ifdef GROUP
+
+                refresh(t,dfs_stpt);
+#endif
+                dfs_stpt_cp++;
+                k--;
+                dfs_stpt++;
             }
-            printf("\ntotal visited state count=%d\n",total_visitedstate_count);
-            printf("\nendstate count:");
-            for(i = 0; i<num_group; i++)
+            printf("\n");
+            fprintf(result,"\n");
+
+            k = 0;
+            while((*stpt_par[i]))//instore the left elements in stpt_par[i]
             {
-                printf("\nendstate_count[%d] = %d ",i,endstate_count[i]);
+                k++;
+                stpt++;
+                printf("stpt_par[%d]:%p,%s\n",i,stpt_par[i],(*stpt_par[i])->n.tr->tp);
+                fprintf(result,"stpt_par[%d]:%p,%s\n",i,stpt_par[i],(*stpt_par[i])->n.tr->tp);
+                // (*stpt)->n = (*stpt_par[i])->n;
+                (*stpt) = (*stpt_par[i]);
+                //
+                //     (*stpt)->n.tr = (*stpt_par[i])->n.tr;
+                //     (*stpt)->n.pr = (*stpt_par[i])->n.pr;
+                //     (*stpt)->n.type = (*stpt_par[i])->n.type;
+
+                printf("loopstpt = %d,End_par:stpt:%s,",k,(*stpt)->n.tr->tp);
+                fprintf(result,"loopstpt = %d,End_par:stpt:%s,",k,(*stpt)->n.tr->tp);
+                stpt_par[i]--;
             }
-            printf("\nexpected state count=%d\n",expectedstate_count);
-#else
-            printf("trace count:total = %d,equivalent=%d,sleep=%d, end=%d\n\n", \
-                    trace_count_total,trace_count_equivalent,trace_count_sleep, \
-                    trace_count_end);
-#endif
-
-#endif
-            goto End1;
-        }
-        dfs_stpt--;
-        //wyy_beg
-        printf("Up:dfs_stpt:%s,branch=%d\n",dfs_stpt->tr->n.tr->tp,dfs_stpt->branch);
-       // char *add = addr_current_state();
-        //wyy_end
-#ifdef GROUP
-        dfs_group--;
-#endif
-#if !(defined HASHC) && (defined SLEEP)
-        if(dfs_stpt->hashp && dfs_stpt->hashp->sl_unmatch)
-        {
-            dfs_stpt->hashp->sl_unmatch = 0;
-            sleep_mismatch = 1;
-            goto Again;
-        }
-#endif
-        n = dfs_stpt->branch;
-
-        /*#ifdef PROV*/
-        if(dfs_stpt->hashp)
-            no_more_in_stack(dfs_stpt->hashp);
-        /*#endif*/
-        t = dfs_stpt->tr;
-        printf("backtr:%s\n",t->n.tr->tp);
-        backtr(fo,-1);
-        /*
-           printf("Back depth=%d",depth);
-           PTRANS(t);
-           */
-#ifdef GROUP
-        set_nmitl(fo,dfs_stpt,depth);
-#endif
-
-#ifdef SLEEP
-        *lptr++ = t;
-        if(lptr == lptr_max)
-            if(!double_lptr())
-                Uerror("MAX_L_LIST is too small,not enough memory available\n");
-        restore_sleep();
-#endif
-
-        depth--;
-
-#ifdef SLEEP
-        *mptr++=t;
-        if(mptr == mptr_max)
-            if(!double_mptr())
-                Uerror("MAX_M_LIST is too small,not enough memory available\n");
-#endif
-        transfer_unlock(t);//if t == group[gid+1].indicator,then lock the gid+1~num_group's group_blocked
-        if(n>0)
-        {
-            transfer_block(t);//blocked the 0~gid-1 group_blocked
+            printf("\n");
+            fprintf(result,"\n");
             //wyy_beg
             char *add = addr_current_state();
-            goto Downagain;
-        }
-        if(n==0)
+            deleted_trail(i);
+        }//end for
+        copy_trail(num_group);
+    }//end depth>0
+}//end critical
+}//end pragma
+goto Up;
+}//endif select_flag = 1 */
+Up:
+printf("Up\n");
+fprintf(result,"Up\n");
+if(depth == 0)
+{
+#ifdef WARAPUP
+    trace_count_total = trace_count_equivalent + trace_count_sleep + trace_count_end;
+#ifdef GROUP
+    printf("state redundant = %d\n",state_redundant);
+    fprintf(result,"state redundant = %d\n",state_redundant);
+    expectedtrace_count += trace_count_total;
+
+    //calculate expected state count
+    int i = 0;
+    int j;
+    for(; i<num_group; i++)
+    {
+        expectedtrace_count += visitedstate_count[i];
+        int series = 1;
+        if(i < (num_group - 1))
         {
-            printf("Up:n==0\t");
-            //transfer_unlock(t);
-            goto Up;
+            series = endstate_count[i] - 1;
+            for(j = i+1;j<num_group;j++)
+            {
+                series *= endstate_count[j];
+            }
+            printf("i = %d,series = %d\n",i,series);
+            fprintf(result,"i = %d,series = %d\n",i,series);
+            expectedtrace_count += series * (num_group-i-1);
+            expectedtrace_count += series;
+            trace_count_compressed += series;
         }
-        goto Downagain;
+    }
+    printf("expectedtrace_count = %d\n",expectedtrace_count);
+    fprintf(result,"expectedtrace_count = %d\n",expectedtrace_count);
+    printf("trace count:total=%d,equivalent=%d,sleep=%d,end=%d,compressed=%d\n\n", \
+            trace_count_total,trace_count_equivalent,trace_count_sleep,trace_count_end \
+            trace_count_compressed);
+    fprintf(result,"trace count:total=%d,equivalent=%d,sleep=%d,end=%d,compressed=%d\n\n", \
+            trace_count_total,trace_count_equivalent,trace_count_sleep,trace_count_end \
+            trace_count_compressed);
+    printf("visited state count:");
+    fprintf(result,"visited state count:");
+    for(i = 0;i<num_group;i++)
+    {
+        printf("\nvisitedstate_count[%d]=%d ",i,visitedstate_count[i]);
+        fprintf(result,"\nvisitedstate_count[%d]=%d ",i,visitedstate_count[i]);
+        total_visitedstate_count += visitedstate_count[i];
+    }
+    printf("\ntotal visited state count=%d\n",total_visitedstate_count);
+    fprintf(result,"\ntotal visited state count=%d\n",total_visitedstate_count);
+    printf("\nendstate count:");
+    fprintf(result,"\nendstate count:");
+    for(i = 0; i<num_group; i++)
+    {
+        printf("\nendstate_count[%d] = %d ",i,endstate_count[i]);
+        fprintf(result,"\nendstate_count[%d] = %d ",i,endstate_count[i]);
+    }
+    printf("\nexpected state count=%d\n",expectedstate_count);
+    fprintf(result,"\nexpected state count=%d\n",expectedstate_count);
+#else
+    printf("trace count:total = %d,equivalent=%d,sleep=%d, end=%d\n\n", \
+            trace_count_total,trace_count_equivalent,trace_count_sleep, \
+            trace_count_end);
+    fprintf(result,"trace count:total = %d,equivalent=%d,sleep=%d, end=%d\n\n", \
+            trace_count_total,trace_count_equivalent,trace_count_sleep, \
+            trace_count_end);
+#endif
+
+#endif
+    goto End1;
+}
+dfs_stpt--;
+//wyy_beg
+printf("Up:dfs_stpt:%s,branch=%d\n",dfs_stpt->tr->n.tr->tp,dfs_stpt->branch);
+fprintf(result,"Up:dfs_stpt:%s,branch=%d\n",dfs_stpt->tr->n.tr->tp,dfs_stpt->branch);
+// char *add = addr_current_state();
+//wyy_end
+#ifdef GROUP
+dfs_group--;
+#endif
+#if !(defined HASHC) && (defined SLEEP)
+if(dfs_stpt->hashp && dfs_stpt->hashp->sl_unmatch)
+{
+    dfs_stpt->hashp->sl_unmatch = 0;
+    sleep_mismatch = 1;
+    goto Again;
+}
+#endif
+n = dfs_stpt->branch;
+
+/*#ifdef PROV*/
+if(dfs_stpt->hashp)
+    no_more_in_stack(dfs_stpt->hashp);
+    /*#endif*/
+    t = dfs_stpt->tr;
+    printf("backtr:%s\n",t->n.tr->tp);
+    fprintf(result,"backtr:%s\n",t->n.tr->tp);
+    backtr(fo,-1);
+    /*
+       printf("Back depth=%d",depth);
+       PTRANS(t);
+       */
+#ifdef GROUP
+    set_nmitl(fo,dfs_stpt,depth);
+#endif
+
+#ifdef SLEEP
+    *lptr++ = t;
+    if(lptr == lptr_max)
+if(!double_lptr())
+    Uerror("MAX_L_LIST is too small,not enough memory available\n");
+    restore_sleep();
+#endif
+
+    depth--;
+
+#ifdef SLEEP
+    *mptr++=t;
+    if(mptr == mptr_max)
+if(!double_mptr())
+    Uerror("MAX_M_LIST is too small,not enough memory available\n");
+#endif
+    transfer_unlock(t);//if t == group[gid+1].indicator,then lock the gid+1~num_group's group_blocked
+if(n>0)
+{
+    transfer_block(t);//blocked the 0~gid-1 group_blocked
+    //wyy_beg
+    char *add = addr_current_state();
+    goto Downagain;
+}
+if(n==0)
+{
+    printf("Up:n==0\t");
+    fprintf(result,"Up:n==0\t");
+    //transfer_unlock(t);
+    goto Up;
+}
+goto Downagain;
 
 End:
-        printf("End\n");
-        if(nb_trans_in_sleep>0)
-        {
-            trace_count_sleep++;
+printf("End\n");
+fprintf(result,"End\n");
+if(nb_trans_in_sleep>0)
+{
+    trace_count_sleep++;
 #ifdef DB
-            printf("depth%d: trace is truncated by sleep set:\n",depth);
-            print_now();
+    printf("depth%d: trace is truncated by sleep set:\n",depth);
+    fprintf(result,"depth%d: trace is truncated by sleep set:\n",depth);
+    print_now();
 #endif
-        }else
-        {
-            trace_count_end++;
-            /*#ifdef GROUP
-              amend_redundant();
+}else
+{
+    trace_count_end++;
+    /*#ifdef GROUP
+      amend_redundant();
 #endif
 */
 #ifdef DB
-            printf("depth%d: trace reaches end:\n",depth);
-            print_now();
+    printf("depth%d: trace reaches end:\n",depth);
+    fprintf(result,"depth%d: trace reaches end:\n",depth);
+    print_now();
 #endif
-        }
-        //insert_trace("select_transition return 0",depth,dfs_stpt);
+}
+//insert_trace("select_transition return 0",depth,dfs_stpt);
 #ifdef SLEEP
-        if(nb_trans_in_sleep > 0)
-        {
-            printf("nb_trans_in_sleep>0\t");
-            goto Up;
-        }
+if(nb_trans_in_sleep > 0)
+{
+    printf("nb_trans_in_sleep>0\t");
+    fprintf(result,"nb_trans_in_sleep>0\t");
+    goto Up;
+}
 #endif
-        /*if (!endstate() && nb_proc()
-          &&  depth < maxdepth-1)
-          {
-          printf("trace count=%d\n",trace_count_total);
-          uerror("invalid endstate");
-          }*/
-        if(depth > 0)
-        {
-            printf("depth>0\t");
-            goto Up;
-        }
-        goto End1;
+/*if (!endstate() && nb_proc()
+  &&  depth < maxdepth-1)
+  {
+  printf("trace count=%d\n",trace_count_total);
+  uerror("invalid endstate");
+  }*/
+if(depth > 0)
+{
+    printf("depth>0\t");
+    fprintf(result,"depth>0\t");
+    goto Up;
+}
+goto End1;
 End1:printf("\n\nnew_state_PO:return\n\n");
-     // return;
+fprintf(result,"\n\nnew_state_PO:return\n\n");
+// return;
 }
 
 #ifdef SLEEP
@@ -2228,6 +2665,7 @@ double_lptr()
         newsize = MAX_L_LIST * 2;
 #ifdef DYNSTRUCTCONT
     printf("doubling lptr, newsiz=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
+    fprintf(result,"doubling lptr, newsiz=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
 #endif
     tmppt = (TRANS **)erealloc(l_list_table,newsize*sizeof(TRANS *),
             MAX_L_LIST*sizeof(TRANS *));
@@ -2263,6 +2701,7 @@ double_mptr()
         newsize = MAX_M_LIST * 2;
 #ifdef DYNSTRUCTCONT
     printf("doubling mptr, newsiz=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
+    fprintf(result,"doubling mptr, newsiz=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
 #endif
 
     tmppt = (TRANS **)erealloc(m_list_table,newsize*sizeof(TRANS *),
@@ -2302,6 +2741,7 @@ double_dfs_stack()
 
 #ifdef DYNSTRUCTCONT
     printf("doubling dfs_stack, newsiz=%d\tmemory=%d\n",ndpth,ndpth*sizeof(DFS_stack));
+    fprintf(result,"doubling dfs_stack, newsiz=%d\tmemory=%d\n",ndpth,ndpth*sizeof(DFS_stack));
 #endif
     tmppt = (DFS_stack *)erealloc(dfs_stack,ndpth*sizeof(DFS_stack),
             maxdepth*sizeof(DFS_stack));
@@ -2335,6 +2775,7 @@ double_stpt()
         newsize = MAX_Stack_tr_size * 2;
 #ifdef DYNSTRUCTCONT
     printf("doubling stpt, newsize=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
+    fprintf(result,"doubling stpt, newsize=%d\tmemory=%d\n",newsize,newsize*sizeof(TRANS *));
 #endif
 
     tmppt = (TRANS **)erealloc(stpt_org,newsize*sizeof(TRANS *),
@@ -2428,6 +2869,11 @@ main(argc, argv)
     }
     tw=bsize/8;
 #endif
+
+    /* wyy_beg */
+    open_result_file(result);
+    /* wyy_end */
+
     signal(SIGINT, wrapup);
     run();
     //print_traces(fo);
@@ -2486,8 +2932,12 @@ void print_stpt(TRANS_DEF **trans_def)
 {
     int i=0;
     for(;i < num_thread; i++)
+    {
         printf("%s",trans_def[i][0].tr->n.tr->tp);
+        fprintf(result,"%s",trans_def[i][0].tr->n.tr->tp);
+    }
     printf("\n");
+    fprintf(result,"\n");
     //    for(i = 0;i < num_thread; i++)
     //      printf("%s",trans_def[i][1].tr->n.tr->tp);
 }

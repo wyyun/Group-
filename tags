@@ -21,25 +21,25 @@ CONNECT	pan.h	125;"	d
 ConfTag	pan.c	/^typedef struct ConfTag {$/;"	s	file:
 ConfTag	pan.c	/^} ConfTag; $/;"	t	typeref:struct:ConfTag	file:
 D	pan.c	144;"	d	file:
-D	pan.c	1920;"	d	file:
+D	pan.c	2075;"	d	file:
 DFS_GROUP	group_2.h	/^typedef struct DFS_GROUP{$/;"	s
 DFS_GROUP	group_2.h	/^}DFS_GROUP;$/;"	t	typeref:struct:DFS_GROUP
 DFS_stack	po.h	/^typedef struct DFS_stack {$/;"	s
 DFS_stack	po.h	/^} DFS_stack;$/;"	t	typeref:struct:DFS_stack
 DXBITS	po.h	78;"	d
 EM	pan.c	146;"	d	file:
-EM	pan.c	1922;"	d	file:
+EM	pan.c	2077;"	d	file:
 EMP	pan.c	94;"	d	file:
-EMPTY	pan.c	778;"	d	file:
+EMPTY	pan.c	782;"	d	file:
 FMO	pan.c	147;"	d	file:
-FMO	pan.c	1923;"	d	file:
+FMO	pan.c	2078;"	d	file:
 FU	pan.c	149;"	d	file:
-FU	pan.c	1925;"	d	file:
+FU	pan.c	2080;"	d	file:
 FUL	pan.c	95;"	d	file:
-FULL	pan.c	780;"	d	file:
-FULLMONE	pan.c	781;"	d	file:
+FULL	pan.c	784;"	d	file:
+FULLMONE	pan.c	785;"	d	file:
 FVE	pan.c	145;"	d	file:
-FVE	pan.c	1921;"	d	file:
+FVE	pan.c	2076;"	d	file:
 GROUP_INFO	group_2.h	/^typedef struct GROUP_INFO{$/;"	s
 GROUP_INFO	group_2.h	/^}GROUP_INFO;$/;"	t	typeref:struct:GROUP_INFO
 Group	group_2.h	/^typedef struct Group{$/;"	s
@@ -72,17 +72,17 @@ M_LOSS	pan.c	/^char M_LOSS=0;             $/;"	v
 Maxbody	pan.c	/^int Maxbody=0;$/;"	v
 NB_STEP	po.h	113;"	d
 NE	pan.c	151;"	d	file:
-NE	pan.c	1927;"	d	file:
+NE	pan.c	2082;"	d	file:
 NEWDEP	pan.c	8;"	d	file:
 NF	pan.c	152;"	d	file:
-NF	pan.c	1928;"	d	file:
+NF	pan.c	2083;"	d	file:
 NORMAL_type	pan.c	99;"	d	file:
 NUM_THREADS	po.h	286;"	d
 OFILES	makefile	/^OFILES= po.o pan.o $/;"	m
 OLD	pan.c	150;"	d	file:
 ON	pan.c	148;"	d	file:
-ON	pan.c	1924;"	d	file:
-ONE	pan.c	779;"	d	file:
+ON	pan.c	2079;"	d	file:
+ONE	pan.c	783;"	d	file:
 OVER	po.h	82;"	d
 P	po.h	/^short *Pst,Ppt,*P,*new_P,*P_1,*P_2,*enabled,*proviso,*P_size,$/;"	v
 P0	pan.h	/^typedef struct P0 { \/* _init *\/$/;"	s
@@ -122,7 +122,7 @@ Pstpt_n	print_tran.h	/^void Pstpt_n(TRANS **stpt, int n)$/;"	f
 Q0	pan.h	/^typedef struct Q0 {	\/* generic q *\/$/;"	s
 Q0	pan.h	/^} Q0;$/;"	t	typeref:struct:Q0
 Qlen	pan.h	/^	uchar Qlen, _t;$/;"	m	struct:Q0
-RDV	pan.c	782;"	d	file:
+RDV	pan.c	786;"	d	file:
 RDV_MEM	pan.c	/^int RDV_MEM;$/;"	v
 RDV_el	pan.c	/^typedef struct RDV_el {$/;"	s	file:
 RDV_el	pan.c	/^} RDV_el;$/;"	t	typeref:struct:RDV_el	file:
@@ -227,7 +227,7 @@ atom	pan.c	/^  short              atom;	$/;"	m	struct:Trans	file:
 atom	po.h	/^	short              atom;	$/;"	m	struct:Trans
 back	pan.c	/^  int                back;	$/;"	m	struct:Trans	file:
 back	po.h	/^	int                back;	$/;"	m	struct:Trans
-backtr	pan.c	/^backtr(fo)$/;"	f
+backtr	pan.c	/^backtr(fo,flag_par)\/\/flag_par(-1:trpt,gid:trpt_par[gid])$/;"	f
 before_group	group_2.h	/^enum stage{before_group=0,in_group,after_group}; \/\/three stage of state space exploration$/;"	e	enum:stage
 bis_set	pan.c	84;"	d	file:
 bis_set	po.h	276;"	d
@@ -254,10 +254,12 @@ conddelproc	pan.c	/^conddelproc(sav,h)$/;"	f
 confl	po.c	/^confl(t1,t2)$/;"	f
 copy_now	pan.c	/^State	copy_now;		\/* the full state vector *\/$/;"	v
 copy_stpt	po.c	/^copy_stpt()$/;"	f
+copy_trail	pan.c	/^copy_trail(int groupnum)$/;"	f
 ct	pan.c	/^struct ConfTag ***ct; $/;"	v	typeref:struct:ConfTag
 ct_g	pan.c	/^struct ConfTag *ct_g;$/;"	v	typeref:struct:ConfTag
 cur_sleep	po.h	/^TRANS **cur_sleep; $/;"	v
 d_hash	po.c	/^d_hash(src, ns, dest, nd, d)$/;"	f
+deleted_trail	pan.c	/^deleted_trail(int flag_par)$/;"	f
 delproc	pan.c	/^delproc(sav, h)$/;"	f
 delq	pan.c	/^delq(sav)$/;"	f
 depend	pan.c	/^depend(acc1,acc2) $/;"	f
@@ -297,8 +299,8 @@ endstate4	pan.h	33;"	d
 endstate_count	trace_2.h	/^int endstate_count[num_group];$/;"	v
 erealloc	po.c	/^erealloc(p,n,on)$/;"	f
 errors	po.h	/^int errors;         $/;"	v
-exec	pan.c	/^exec(t,pr,flag,fo)$/;"	f
-execute	pan.c	/^execute(tr,fo)$/;"	f
+exec	pan.c	/^exec(t,pr,flag,fo,flag_par)\/\/flag_par=(-1,gid)$/;"	f
+execute	pan.c	/^execute(tr,fo,flag_par)\/\/flag_par = (-1:trpt,gid:trpt_par[gid])$/;"	f
 expectedstate_count	trace_2.h	/^int expectedstate_count;$/;"	v
 expectedtrace_count	trace_2.h	/^int expectedtrace_count;$/;"	v
 extern_option	pan.c	/^extern_option(arg)$/;"	f
@@ -595,25 +597,27 @@ tr	po.h	/^	TRANS *tr;$/;"	m	struct:DFS_stack
 tr	po.h	/^	TRANS *tr;$/;"	m	struct:Sleep
 tr	po.h	/^	Trans *tr;$/;"	m	struct:Rtrans_rdv
 tr	po.h	/^	Trans *tr;$/;"	m	struct:Rtrans_stat
-tr_def_in	pan.c	/^tr_def_in()$/;"	f
+tr_def_in	pan.c	/^tr_def_in(int flag_par)$/;"	f
 trace_count_compressed	trace_2.h	/^int trace_count_compressed;$/;"	v
 trace_count_end	trace_2.h	/^int trace_count_end;$/;"	v
 trace_count_equivalent	trace_2.h	/^int trace_count_equivalent;$/;"	v
 trace_count_sleep	trace_2.h	/^int trace_count_sleep;$/;"	v
 trace_count_total	trace_2.h	/^int trace_count_total;$/;"	v
 traceid	trace_2.h	/^	int traceid;$/;"	m	struct:Trace
-trail	pan.c	/^Trail *trail, *trpt, *trans_def_trail;$/;"	v
+trail	pan.c	/^Trail *trail, *trpt, *trans_def_trail, *trpt_par[2],*trpt_cp[2];$/;"	v
 trans	pan.h	/^Trans ***trans;	\/* 1 ptr per state per proctype *\/$/;"	v
 trans_def	po.h	/^TRANS_DEF **trans_def; $/;"	v
-trans_def_in	pan.c	/^trans_def_in()$/;"	f
-trans_def_trail	pan.c	/^Trail *trail, *trpt, *trans_def_trail;$/;"	v
+trans_def_in	pan.c	/^trans_def_in(int flag_par)$/;"	f
+trans_def_trail	pan.c	/^Trail *trail, *trpt, *trans_def_trail, *trpt_par[2],*trpt_cp[2];$/;"	v
 trans_num	group_2.h	/^int *trans_num;$/;"	v
 trans_num	init_2.h	/^int *trans_num;$/;"	v
 transfer	group_2.h	/^void transfer()$/;"	f
 transfer_block	group_2.h	/^void transfer_block(TRANS *tr)$/;"	f
 transfer_par	group_2.h	/^void transfer_par(TRANS *tr)$/;"	f
 transfer_unlock	group_2.h	/^void transfer_unlock(TRANS *tr)$/;"	f
-trpt	pan.c	/^Trail *trail, *trpt, *trans_def_trail;$/;"	v
+trpt	pan.c	/^Trail *trail, *trpt, *trans_def_trail, *trpt_par[2],*trpt_cp[2];$/;"	v
+trpt_cp	pan.c	/^Trail *trail, *trpt, *trans_def_trail, *trpt_par[2],*trpt_cp[2];$/;"	v
+trpt_par	pan.c	/^Trail *trail, *trpt, *trans_def_trail, *trpt_par[2],*trpt_cp[2];$/;"	v
 truncs	po.h	/^int truncs=0; $/;"	v
 tt	pan.c	/^short tt;$/;"	v
 tw	po.h	/^int bsize=32, tw=4; $/;"	v
@@ -626,8 +630,8 @@ type_tr	pan.c	/^uchar *type_tr; $/;"	v
 uchar	pan.c	6;"	d	file:
 uchar	po.h	22;"	d
 uerror	po.c	/^uerror(str)$/;"	f
-undo_all_trans	pan.c	/^undo_all_trans()$/;"	f
-undo_one_trans	pan.c	/^undo_one_trans()$/;"	f
+undo_all_trans	pan.c	/^undo_all_trans(int flag_par)$/;"	f
+undo_one_trans	pan.c	/^undo_one_trans(int flag_par)$/;"	f
 unrecv	pan.c	/^unrecv(from, slot, fld, fldvar, strt)$/;"	f
 unsend	pan.c	/^unsend(into)$/;"	f
 unset	pan.c	82;"	d	file:

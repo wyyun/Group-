@@ -2319,7 +2319,7 @@ deleted_trail(int flag_par)
         k++;
         trpt_cp[flag_par]++;
         trpt_cp[flag_par] = trpt_par[flag_par];
-        printf("trpt_cp:%s, trpt_cp=%d,trpt_par=%d\n",trpt_cp[flag_par]->o_t->tp,trpt_cp[flag_par],trpt_par[flag_par]);
+        printf("trpt_cp:%s, trpt_cp=%p,trpt_par=%p\n",trpt_cp[flag_par]->o_t->tp,trpt_cp[flag_par],trpt_par[flag_par]);
         trpt_par[flag_par]--;
         trpt--;
     }
@@ -2345,9 +2345,9 @@ copy_trail(int groupnum)
             trpt->o_tt = trpt_cp[i]->o_tt;
             trpt->o_t = trpt_cp[i]->o_t;
             trpt->oval = trpt_cp[i]->oval;
-            printf("copy_trail:%s=%d\n",trpt_cp[i]->o_t->tp,trpt_cp[i]->oval);
+            printf("copy_trail:%s=%p\n",trpt_cp[i]->o_t->tp,trpt_cp[i]->oval);
             trpt->prog = trpt_cp[i]->prog;
-            printf("trpt:%s trpt=%d,trpt_cp=%d\n",trpt->o_t->tp,trpt,trpt_cp[i]);
+            printf("trpt:%s trpt=%p,trpt_cp=%p\n",trpt->o_t->tp,trpt,trpt_cp[i]);
             trpt_cp[i]++;
         }
     }
