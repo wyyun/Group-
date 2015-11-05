@@ -447,6 +447,7 @@ o_tt	pan.c	/^  short o_tt;$/;"	m	struct:Trail	file:
 old	pan.c	/^  int *old; $/;"	m	struct:ConfTag	file:
 op	pan.c	/^  uchar op;$/;"	m	struct:ACC	file:
 op	po.h	/^	uchar op;$/;"	m	struct:ACC
+open_result_file	pallpo.h	/^void open_result_file(FILE *result)$/;"	f
 ot	pan.c	/^uchar ot;$/;"	v
 oval	pan.c	/^  int oval;$/;"	m	struct:Trail	file:
 p_restor	pan.c	/^p_restor(h)$/;"	f
@@ -516,6 +517,7 @@ reset_group	group_2.h	/^void reset_group(int gid)$/;"	f
 reset_p	pan.c	/^void reset_p(int pid)$/;"	f
 reset_var	pan.c	/^void reset_var(int gid)$/;"	f
 restore_sleep	po.c	/^restore_sleep()$/;"	f
+result	pallpo.h	/^FILE *result;$/;"	v
 rm_tr_confl	po.c	/^rm_tr_confl(t)$/;"	f
 rtrans	pan.c	/^Rtrans_stat ***rtrans;$/;"	v
 rtype	pan.c	/^  uchar              rtype;$/;"	m	struct:Trans	file:

@@ -41,78 +41,78 @@ wrapup()
     double a, b;
 
     printf("(%s)\n", Version);
-    fprintf(result,"(%s)\n", Version);
+    /* fprintf(result,"(%s)\n", Version); */
 #ifdef BITSTATE
     printf("bit statespace search ");
-    fprintf(result,"bit statespace search ");
+    /* fprintf(result,"bit statespace search "); */
 #else
     printf("full statespace search ");
-    fprintf(result,"full statespace search ");
+    /* fprintf(result,"full statespace search "); */
 #endif
 #if !(defined BITSTATE) && !(defined PROV)
     printf("for:\n	invalid endstates");
-    fprintf(result,"for:\n	invalid endstates");
+    /* fprintf(result,"for:\n	invalid endstates"); */
 #else
     printf("for:\n	assertion violations and invalid endstates");
-    fprintf(result,"for:\n	assertion violations and invalid endstates");
+    /* fprintf(result,"for:\n	assertion violations and invalid endstates"); */
 #endif
     if (!done)
     {
         printf("\nsearch was not completed");
-        fprintf(result,"\nsearch was not completed");
+        /* fprintf(result,"\nsearch was not completed"); */
     }
     printf("\n\nvector %d byte, depth reached %d", hmax, mreached);
-    fprintf("result,\n\nvector %d byte, depth reached %d", hmax, mreached);
+    /* fprintf("result,\n\nvector %d byte, depth reached %d", hmax, mreached); */
 
     printf(", errors: %d\n", errors);
-    fprintf(result,", errors: %d\n", errors);
+    /* fprintf(result,", errors: %d\n", errors); */
 
 #ifdef BITSTATE
     printf("%8d states, visited\n", nstates);
-    fprintf(result,"%8d states, visited\n", nstates);
+    /* fprintf(result,"%8d states, visited\n", nstates); */
 
     printf("%8d states, matched	   total: %8d\n",truncs, nstates+truncs);
-    fprintf(result,"%8d states, matched	   total: %8d\n",truncs, nstates+truncs);
+    /* fprintf(result,"%8d states, matched	   total: %8d\n",truncs, nstates+truncs); */
 #else
     printf("%8d states, stored\n", nstates);
-    fprintf(result,"%8d states, stored\n", nstates);
+    /* fprintf(result,"%8d states, stored\n", nstates); */
 
     if(ncleared)
     {
         printf("%8d states, cleared\n", ncleared);
-        fprintf(result,"%8d states, cleared\n", ncleared);
+        /* fprintf(result,"%8d states, cleared\n", ncleared); */
     }
 
     printf("%8d states, matched	   total: %8d\n",truncs, nstates+ncleared+truncs);
-    fprintf(result,"%8d states, matched	   total: %8d\n",truncs, nstates+ncleared+truncs);
+    /* fprintf(result,"%8d states, matched	   total: %8d\n",truncs, nstates+ncleared+truncs); */
 #endif
 
     a = (double) (1<<ssize);
     b = (double) nstates_max+1.;
 
     printf("hash factor: %f ", a/b);
-    fprintf(result,"hash factor: %f ", a/b);
+    /* fprintf(result,"hash factor: %f ", a/b); */
 
 #ifdef BITSTATE
     printf("(best coverage if >100)\n");
-    fprintf(result,"(best coverage if >100)\n");
+    /* fprintf(result,"(best coverage if >100)\n"); */
 
 #else
     printf("hash conflicts: %d (resolved) (%3.1f %%)\n",hcmp,((double)hcmp/(double)nstates)*100);
-    fprintf(result,"hash conflicts: %d (resolved) (%3.1f %%)\n",hcmp,((double)hcmp/(double)nstates)*100);
+    /* fprintf(result,"hash conflicts: %d (resolved) (%3.1f %%)\n",hcmp,((double)hcmp/(double)nstates)*100); */
 
 #endif
     printf("(max size 2^%d states, ", ssize);
-    fprintf(result,"(max size 2^%d states, ", ssize);
+    /* fprintf(result,"(max size 2^%d states, ", ssize); */
 
 #ifdef HASHC
     printf("%d bits stored, ", bsize);
-    fprintf(result,"%d bits stored, ", bsize);
+    /* fprintf(result,"%d bits stored, ", bsize); */
 
 #endif
 #ifdef MEMCNT
     printf("memory used: %d\n", memcnt);
-    fprintf(result,"memory used: %d\n", memcnt);
+    /* fprintf(result,"memory used: %d\n", memcnt); */
 
 #endif
     extern_wrapup(done);
@@ -1652,6 +1652,12 @@ new_state_PO()
         int nid;//get the thread id;
         int select_flag = 0;
         int select_par = 1;//select_par = 0,parallel;select_flag = 1,schedule;
+
+        if(!(result = fopen("result.txt","w")))
+        {
+            printf("cannot create result.txt");
+            exit(1);
+        }
     #ifdef OUT
     #ifdef STDOUT
         fo=stdout;
@@ -1876,7 +1882,8 @@ Downagain:
         if(select_flag)//select_flag=1
         {
             omp_set_num_threads(NUM_THREADS);
-#pragma omp parallel for reduction(+:depth,truncs,state_count,trace_count_equivalent,nstates,trace_count_sleep,trace_count_end)
+#pragma omp parallel  reduction(+:depth,truncs,state_count,trace_count_equivalent,nstates,trace_count_sleep,trace_count_end)
+            {
             for(nid = 0 ; nid < NUM_THREADS ; nid++)
             {
 
@@ -2004,11 +2011,13 @@ Down_par:
 Again_par:
                     printf("\nAgain_par:nid = %d\n",nid);
                     fprintf(result,"\nAgain_par:nid = %d\n",nid);
+            }//end for
+
 #pragma omp barrier
+        {
 #pragma omp master
                     //                if(nid == 0)
-                    {
-#pragma omp critical
+//#pragma omp critical
                         {
                             printf("before select_transitions_par,nid == %d\n",nid);
                             fprintf(result,"before select_transitions_par,nid == %d\n",nid);
@@ -2017,13 +2026,18 @@ Again_par:
                             printf("end select_transitions_par,nid == %d\n",nid);
                             fprintf(result,"end select_transitions_par,nid == %d\n",nid);
 
-                        }
-                    }
+                        }//end master
+                    }//end barrier
             //}//end if(stpt_par[nid])
 
 
 #pragma omp barrier
+        {
 #ifdef GROUP
+/* #pragma omp parallel for reduction(+:depth,truncs,state_count,trace_count_equivalent,nstates,trace_count_sleep,trace_count_end) */
+        /* for(nid = 0 ; nid < NUM_THREADS ; nid++)
+        { */
+            nid = omp_get_thread_num();
             if(n_par[nid]==0)
             {
                 if(nb_trans_in_sleep==0)
@@ -2094,7 +2108,11 @@ Up_par:
 
             //printf("************End_par:nid=%d\n",nid);
             //                if(nid == 0)
+        /* }//end for */
+     }//end barrier
+
 #pragma omp barrier
+        {
 #pragma omp master
             {
                 if (depth > 0)
@@ -2164,8 +2182,9 @@ Up_par:
                     }//end for
                     copy_trail(num_group);
                 }//end depth>0
-            }//end critical
-        }//end for
+            }//end master
+        }//end barrier
+     }//end for
 /* goto Up;
    break; */
 }//endif select_flag = 1
@@ -2871,7 +2890,7 @@ main(argc, argv)
 #endif
 
     /* wyy_beg */
-    open_result_file(result);
+    /* open_result_file(result); */
     /* wyy_end */
 
     signal(SIGINT, wrapup);
