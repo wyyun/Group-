@@ -234,7 +234,7 @@ extern char *emalloc();
 
 #include	"pan.h"
 #define max(a,b) (((a)<(b)) ? (b) : (a))
-Trail *trail, *trpt, *trans_def_trail, *trpt_par[2],*trpt_cp[2];
+Trail *trail, *trpt, *trans_def_trail, *trpt_par[2], *trpt_cp[2];
 uchar *this;
 
 //char *malloc(), *memset();
@@ -261,10 +261,10 @@ Svtack	*svtack;	/* for old state vectors */
 #endif
 char *procname[] = {
 	"_init",
-	"Y2",
-	"Y1",
-	"X2",
-	"X1",
+	"y2",
+	"y1",
+	"x2",
+	"x1",
 	"_progress",
 };
 
@@ -301,22 +301,22 @@ addproc(n)
 		((P0 *)pptr(h))->_p = 1;
  reached0[1]=1;
 		break;
-	case 1:	/* Y2 */
+	case 1:	/* y2 */
 		((P1 *)pptr(h))->_t = 1;
 		((P1 *)pptr(h))->_p = 1;
  reached1[1]=1;
 		break;
-	case 2:	/* Y1 */
+	case 2:	/* y1 */
 		((P2 *)pptr(h))->_t = 2;
 		((P2 *)pptr(h))->_p = 1;
  reached2[1]=1;
 		break;
-	case 3:	/* X2 */
+	case 3:	/* x2 */
 		((P3 *)pptr(h))->_t = 3;
 		((P3 *)pptr(h))->_p = 1;
  reached3[1]=1;
 		break;
-	case 4:	/* X1 */
+	case 4:	/* x1 */
 		((P4 *)pptr(h))->_t = 4;
 		((P4 *)pptr(h))->_p = 1;
  reached4[1]=1;
@@ -356,90 +356,91 @@ run()
        memset((char *)&now, 0, sizeof(State));
 	vsize = sizeof(State) - VECTORSZ;
 	settable();
-    trail = (Trail *) emalloc(MAX_TRAIL*sizeof(Trail));
-    trans_def_trail = (Trail *) emalloc(MAX_TRANS_DEF_TRAIL*sizeof(Trail));
-    //wyy_beg
-    trpt_par[0] = (Trail *) emalloc(MAX_TRAIL*sizeof(Trail));
-    trpt_par[1] = (Trail *) emalloc(MAX_TRAIL*sizeof(Trail));
-    //wyy_end
+  trail = (Trail *) emalloc(MAX_TRAIL*sizeof(Trail));
+  trans_def_trail = (Trail *) emalloc(MAX_TRANS_DEF_TRAIL*sizeof(Trail));
+
+   /*wyy_beg*/
+   trpt_par[0] = (Trail *)emalloc(MAX_TRAIL * sizeof(Trail));
+   trpt_par[1] = (Trail *)emalloc(MAX_TRAIL * sizeof(Trail));
+   /*wyy_end*/
 
 
-    nb_pr=6;
-    nb_tr=15;
-    type_tr=(uchar *)emalloc((nb_tr+1)*sizeof(uchar));
-    settype();
-    ct=(struct ConfTag ***)emalloc(MAXPROC*sizeof(struct ConfTag **));
-    nst=(int *)emalloc(6*sizeof(int));
-    first_tr=(int *)emalloc(6*sizeof(int));
-    last_tr=(int *)emalloc(6*sizeof(int));
-    rtrans=(Rtrans_stat ***)emalloc(MAXPROC*sizeof(Rtrans_stat **));
-    i=(MAXPROC-1)/SHORT+1;
-    init_proc_lst();
-    first_tr[0]=1;
-    last_tr[0]=5;
-    first_tr[1]=6;
-    last_tr[1]=7;
-    first_tr[2]=8;
-    last_tr[2]=10;
-    first_tr[3]=11;
-    last_tr[3]=12;
-    first_tr[4]=13;
-    last_tr[4]=15;
-    first_tr[5]=0;
-    last_tr[5]=0;
-    Maxbody = max(Maxbody, sizeof(P0));
-    Maxbody = max(Maxbody, sizeof(P1));
-    Maxbody = max(Maxbody, sizeof(P2));
-    Maxbody = max(Maxbody, sizeof(P3));
-    Maxbody = max(Maxbody, sizeof(P4));
-    reached[0] = reached0;
-    reached[1] = reached1;
-    reached[2] = reached2;
-    reached[3] = reached3;
-    reached[4] = reached4;
-    nst[0] = nstates0;
-    nst[1] = nstates1;
-    nst[2] = nstates2;
-    nst[3] = nstates3;
-    nst[4] = nstates4;
-    accpstate[0] = (uchar *) emalloc(nstates0);
-    accpstate[1] = (uchar *) emalloc(nstates1);
-    accpstate[2] = (uchar *) emalloc(nstates2);
-    accpstate[3] = (uchar *) emalloc(nstates3);
-    accpstate[4] = (uchar *) emalloc(nstates4);
-    progstate[0] = (uchar *) emalloc(nstates0);
-    progstate[1] = (uchar *) emalloc(nstates1);
-    progstate[2] = (uchar *) emalloc(nstates2);
-    progstate[3] = (uchar *) emalloc(nstates3);
-    progstate[4] = (uchar *) emalloc(nstates4);
-    stopstate[0] = (uchar *) emalloc(nstates0);
-    stopstate[1] = (uchar *) emalloc(nstates1);
-    stopstate[2] = (uchar *) emalloc(nstates2);
-    stopstate[3] = (uchar *) emalloc(nstates3);
-    stopstate[4] = (uchar *) emalloc(nstates4);
-    stopstate[0][endstate0] = 1;
-    stopstate[1][endstate1] = 1;
-    stopstate[2][endstate2] = 1;
-    stopstate[3][endstate3] = 1;
-    stopstate[4][endstate4] = 1;
-    retrans(0, nstates0, start0, src_ln0, reached0);
-    retrans(1, nstates1, start1, src_ln1, reached1);
-    retrans(2, nstates2, start2, src_ln2, reached2);
-    retrans(3, nstates3, start3, src_ln3, reached3);
-    retrans(4, nstates4, start4, src_ln4, reached4);
-    RealTrans(0, nstates0, start0);
-    RealTrans(1, nstates1, start1);
-    RealTrans(2, nstates2, start2);
-    RealTrans(3, nstates3, start3);
-    RealTrans(4, nstates4, start4);
-    if (state_tables)
-    {	printf("\nTransition Type: ");
-        printf("A=atomic;\n");
-        printf("Source-State Labels: ");
+	nb_pr=6;
+	nb_tr=37;
+type_tr=(uchar *)emalloc((nb_tr+1)*sizeof(uchar));
+settype();
+ct=(struct ConfTag ***)emalloc(MAXPROC*sizeof(struct ConfTag **));
+nst=(int *)emalloc(6*sizeof(int));
+first_tr=(int *)emalloc(6*sizeof(int));
+last_tr=(int *)emalloc(6*sizeof(int));
+rtrans=(Rtrans_stat ***)emalloc(MAXPROC*sizeof(Rtrans_stat **));
+i=(MAXPROC-1)/SHORT+1;
+init_proc_lst();
+first_tr[0]=1;
+last_tr[0]=5;
+first_tr[1]=6;
+last_tr[1]=13;
+first_tr[2]=14;
+last_tr[2]=21;
+first_tr[3]=22;
+last_tr[3]=29;
+first_tr[4]=30;
+last_tr[4]=37;
+first_tr[5]=0;
+last_tr[5]=0;
+	Maxbody = max(Maxbody, sizeof(P0));
+	Maxbody = max(Maxbody, sizeof(P1));
+	Maxbody = max(Maxbody, sizeof(P2));
+	Maxbody = max(Maxbody, sizeof(P3));
+	Maxbody = max(Maxbody, sizeof(P4));
+	reached[0] = reached0;
+	reached[1] = reached1;
+	reached[2] = reached2;
+	reached[3] = reached3;
+	reached[4] = reached4;
+       nst[0] = nstates0;
+       nst[1] = nstates1;
+       nst[2] = nstates2;
+       nst[3] = nstates3;
+       nst[4] = nstates4;
+	accpstate[0] = (uchar *) emalloc(nstates0);
+	accpstate[1] = (uchar *) emalloc(nstates1);
+	accpstate[2] = (uchar *) emalloc(nstates2);
+	accpstate[3] = (uchar *) emalloc(nstates3);
+	accpstate[4] = (uchar *) emalloc(nstates4);
+	progstate[0] = (uchar *) emalloc(nstates0);
+	progstate[1] = (uchar *) emalloc(nstates1);
+	progstate[2] = (uchar *) emalloc(nstates2);
+	progstate[3] = (uchar *) emalloc(nstates3);
+	progstate[4] = (uchar *) emalloc(nstates4);
+	stopstate[0] = (uchar *) emalloc(nstates0);
+	stopstate[1] = (uchar *) emalloc(nstates1);
+	stopstate[2] = (uchar *) emalloc(nstates2);
+	stopstate[3] = (uchar *) emalloc(nstates3);
+	stopstate[4] = (uchar *) emalloc(nstates4);
+	stopstate[0][endstate0] = 1;
+	stopstate[1][endstate1] = 1;
+	stopstate[2][endstate2] = 1;
+	stopstate[3][endstate3] = 1;
+	stopstate[4][endstate4] = 1;
+	retrans(0, nstates0, start0, src_ln0, reached0);
+	retrans(1, nstates1, start1, src_ln1, reached1);
+	retrans(2, nstates2, start2, src_ln2, reached2);
+	retrans(3, nstates3, start3, src_ln3, reached3);
+	retrans(4, nstates4, start4, src_ln4, reached4);
+	RealTrans(0, nstates0, start0);
+	RealTrans(1, nstates1, start1);
+	RealTrans(2, nstates2, start2);
+	RealTrans(3, nstates3, start3);
+	RealTrans(4, nstates4, start4);
+	if (state_tables)
+	{	printf("\nTransition Type: ");
+		printf("A=atomic;\n");
+		printf("Source-State Labels: ");
 		printf("p=progress; e=end; a=accept;\n");
 		exit(0);
 	}
-		now.x = 0;
+		now.x = 1;
 		now.y = 1;
 	UnBlock;	/* disable rendez-vous */
 	stack	= ( Stack *) emalloc(sizeof(Stack));
@@ -641,12 +642,12 @@ delproc(sav, h)
 			printf("sv[%d]: _t=%d, _p=%d\n",i,p->_t,p->_p);
 		}
 	}
-	void tp_oldkey(uchar *oldkey)
+	void tp_oldkey(uchar *p)
 	{
 		int i = 0;
 		for(;i<now._nr_pr;i++)
 		{
-			P0 *p = (P0*)pptr_oldkey(oldkey,i);
+			P0 *p = (P0*)pptr_oldkey(p,i);
 			printf("sv[%d]: _t=%d, _p=%d\n",i,p->_t,p->_p);
 		}
 	}
@@ -824,167 +825,152 @@ insert_p(plst,Pid,What)
     unset(plst,Pid);
 }
 
-exec(t,pr,flag,fo,flag_par)//flag_par=(-1,gid)
-    Trans *t;
-    short pr,flag;
-    FILE *fo;
-    int flag_par;
-{
-    II=pr;
-    this = pptr(II); 
-    ot = (uchar) ((P0 *)this)->_t; 
-    tt = (short) ((P0 *)this)->_p;
-    if(flag_par == -1)
-    {
-        trpt++;
-        trpt->o_t  =  t; 
-        trpt->o_ot = ot;
-        trpt->o_tt = tt;
-        trpt--;
-    }
-    else
-    {
-    /*    trpt_par[flag_par]++;
-        trpt_par[flag_par] = (Trail)emalloc(sizeof(Trail));
-        trpt_par[flag_par]->o_t  =  t; 
-        trpt_par[flag_par]->o_ot = ot;
-        trpt_par[flag_par]->o_tt = tt;
-        trpt_par[flag_par]--;
-    */
-        trpt++;
-        trpt->o_t  =  t; 
-        trpt->o_ot = ot;
-        trpt->o_tt = tt;
-        trpt--;
+exec(t,pr,flag,fo,flag_par)
+     Trans *t;
+     short pr,flag;
+     FILE *fo;
+     int flag_par;{
+  II=pr;
+  this = pptr(II); 
+  ot = (uchar) ((P0 *)this)->_t; 
+  tt = (short) ((P0 *)this)->_p; 
 
-        trpt_par[flag_par]++;
-     //   (trpt_par[flag_par]) = (Trail *)emalloc(sizeof(Trail));
-        trpt_par[flag_par]->o_t  =  t; 
-        trpt_par[flag_par]->o_ot = ot;
-        trpt_par[flag_par]->o_tt = tt;
-        trpt_par[flag_par]--;
-    }
-    if(t->forw==13) 
-    { 
-        printf("exec:t->forw=%d\n",t->forw);
-    } 
-    move(t,1,flag_par);
+   /*wyy_beg*/
+   if(flag_par == -1)
+   {
+       trpt++;
+       trpt->o_t  =  t; 
+       trpt->o_ot = ot; trpt->o_tt = tt;
+       trpt--;
+   }
+   else
+   {
+       trpt++;
+       trpt->o_t  =  t; 
+       trpt->o_ot = ot; trpt->o_tt = tt;
+       trpt--;
 
-    /*if(fo!=NULL)
-      {
+       trpt_par[flag_par]++;
+       trpt_par[flag_par]->o_t = t;
+       trpt_par[flag_par]->o_ot = ot;
+       trpt_par[flag_par]->o_tt = tt;
+       trpt_par[flag_par]--;
+   }
+  if(t->forw==13) 
+  { 
+	 printf("exec:t->forw=%d\n",t->forw);
+  } 
+  move(t,1,flag_par);
+
+  /*if(fo!=NULL)
+    {
       fprintf(fo,"Exec %d:proc %d (%s) exec trans %d (%s)\n",depth,II,procname[ot],t->forw,t->tp);
       fflush(fo);
-#ifdef STDO
-printf("\033[0;31mExec %d:proc %d (%s) exec trans %d (%s)\033[0m\n",depth,II,procname[ot],t->forw,t->tp);
-#endif
-}*/
-    if(flag_par == -1)
-    {
-        trpt++;
-    //    printf("****exec:trpt=%s****\n",trpt->o_t->tp);
-    }
-    else
-    {
-        trpt_par[flag_par]++;
-        trpt++;
-    //    printf("****exec:trpt=%d,trpt_par=%d****\n",trpt,trpt_par[flag_par]);
-    //    printf("****exec:trpt=%s,trpt_par=%s****\n",trpt->o_t->tp,trpt_par[flag_par]->o_t->tp);
-    }
-    
+      #ifdef STDO
+		printf("\033[0;31mExec %d:proc %d (%s) exec trans %d (%s)\033[0m\n",depth,II,procname[ot],t->forw,t->tp);
+	  #endif
+    }*/
+  
+   /*wyy_beg*/
+   if(flag_par == -1)
+   {
+       trpt++;
+   }
+   else
+   {
+       trpt_par[flag_par]++;
+       trpt++;
+   }
 
-    if(flag)
-    {
-        if((int)
-            (trpt-trail)>=MAX_TRAIL)
-        if(!double_trail())
-            Uerror("MAX_TRAIL too small\n");
+  if(flag)
+   {
+      if((int)(trpt-trail)>=MAX_TRAIL)
+	        if(!double_trail())
+	            Uerror("MAX_TRAIL too small\n");
     }
-    else
-    if((int)
-        (trpt-trans_def_trail)>=MAX_TRANS_DEF_TRAIL)
-    if(!double_trans_def_trail())
-        Uerror("MAX_TRANS_DEF_TRAIL too small\n");
+  else
+    if((int)(trpt-trans_def_trail)>=MAX_TRANS_DEF_TRAIL)
+      if(!double_trans_def_trail())
+	        Uerror("MAX_TRANS_DEF_TRAIL too small\n");
 
-    if(flag_par == -1)
-        trpt->pr = II; 
-    else
-    {
-        trpt_par[flag_par]->pr = II;
-        trpt->pr = II; 
+   /*wyy_beg*/
+   if(flag_par == -1)
+       trpt->pr = II; 
+   else
+   {
+       trpt_par[flag_par]->pr = II;
+       trpt->pr = II;
+   }
+   /*wyy_end*/
+
+  if (t->st)
+   {
+      ((P0 *)this)->_p = t->st;
+      if(flag)
+	        reached[ot][t->st] = 1; 
     }
-    if (t->st)
-    {
-        ((P0 *)this)->_p = t->st;
-        if(flag)
-            reached[ot][t->st] = 1; 
-    }
-    return 1;
+   return 1;
 }
 
+/*wyy_beg*/
 undo_all_trans(int flag_par)
 {
-    Trans *t;
-    if(flag_par == -1)
-    {
-        while(trpt!=trans_def_trail)
-        {
-           // printf("undo_all_trans:trpt:%s,t->back=%d\n",trpt->o_t->tp,trpt->o_t->back);
-            //printf("tr_def_in(): trans_def_trail:%s,t->back=%d\n",(trans_def_trail)->o_t->tp,(trans_def_trail)->o_t->back);
-            t  = trpt->o_t; 
-            ot = trpt->o_ot; II = trpt->pr;
-            tt = trpt->o_tt; this = pptr(II);
-            ((P0 *)this)->_p=tt;
-            back(t);
-            trpt--;
-        }
+   Trans *t;
+   if(flag_par == -1)
+   {
+       while(trpt!=trans_def_trail)
+       {
+           t  = trpt->o_t; 
+           ot = trpt->o_ot; II = trpt->pr;
+           tt = trpt->o_tt; this = pptr(II);
+           ((P0 *)this)->_p=tt;
+           back(t);
+           trpt--;
+       }
     }
-    else
-    {
-        //while(trpt_par[flag_par] != trans_def_trail)
-        while((trpt_par[flag_par] != trans_def_trail)&&trpt_par[flag_par]->o_t)
-        {
-         //   printf("undo_all_trans:trpt_par[%d]:%s,t->back=%d\n",flag_par,trpt_par[flag_par]->o_t->tp,trpt_par[flag_par]->o_t->back);
-           // printf("tr_def_in(): trans_def_trail:%s,t->back=%d\n",(trans_def_trail)->o_t->tp,(trans_def_trail)->o_t->back);
-            t  = trpt_par[flag_par]->o_t; 
-            ot = trpt_par[flag_par]->o_ot;
-            II = trpt_par[flag_par]->pr;
-            tt = trpt_par[flag_par]->o_tt; 
-            this = pptr(II);
-            ((P0 *)this)->_p=tt;
-            back(t);
-            trpt_par[flag_par]--;
-        }
-
-    }
+   else
+   {
+       while((trpt_par[flag_par] != trans_def_trail) && trpt_par[flag_par]->o_t)
+       {
+           t = trpt_par[flag_par]->o_t;
+           ot = trpt_par[flag_par]->o_ot;
+           II = trpt_par[flag_par]->pr;
+           tt = trpt_par[flag_par]->o_tt;
+           this = pptr(II);
+           ((P0 *)this)->_p = tt;
+           back(t);
+           trpt_par[flag_par]--;
+       }
+   }
 }
 
 undo_one_trans(int flag_par)
 {
-    Trans *t;
-    
-    if(flag_par == -1)
-    {
-        t  = trpt->o_t; 
-        ot = trpt->o_ot; 
-        II = trpt->pr;
-        tt = trpt->o_tt;
-    }
-    else
-    {
-        t  = trpt_par[flag_par]->o_t; 
-        ot = trpt_par[flag_par]->o_ot; 
-        II = trpt_par[flag_par]->pr;
-        tt = trpt_par[flag_par]->o_tt;
+  Trans *t;
 
-    }
-    this = pptr(II);
-    ((P0 *)this)->_p=tt;
-    back(t);
-    if(flag_par == -1)
-        trpt--;
-    else
-        trpt_par[flag_par]--;
+   if(flag_par == -1)
+   {
+       t  = trpt->o_t; 
+       ot = trpt->o_ot;
+       II = trpt->pr;
+       tt = trpt->o_tt;
+   }
+   else
+   {
+       t  = trpt->o_t; 
+       ot = trpt->o_ot;
+       II = trpt->pr;
+       tt = trpt->o_tt;
+   }
+   this = pptr(II);
+  ((P0 *)this)->_p=tt;
+  back(t);
+if(flag_par == -1)
+   trpt--;
+else
+   trpt_par[flag_par]--;
 }
+/*wyy_end*/
 
 init_new_proc(h,type)
      short type;
@@ -1122,7 +1108,10 @@ print_trans(f,t)
 
 double_trail()  
 {
+/*wyy_beg*/
   Trail *tmppt,*tmppt0,*tmppt1;
+/*wyy_end*/
+
   int ndpth;
 
   if (MAX_TRAIL<100000)
@@ -1140,26 +1129,25 @@ double_trail()
     {
       memcpy(tmppt,trail,(MAX_TRAIL+10)*sizeof(Trail));
       efree(trail,(MAX_TRAIL+2)*sizeof(Trail));
-      trpt = tmppt+(trpt-trail);
-      trail = tmppt;
-      tmppt0 = (Trail *)emalloc((ndpth+2)*sizeof(Trail));
-      if(tmppt0)
-      {
-          memcpy(tmppt0,trail,(MAX_TRAIL + 10)*sizeof(Trail));
-          efree(trail,(MAX_TRAIL + 2)*sizeof(Trail));
-          trpt_par[0] = tmppt0+(trpt_par[0] - trail);
-          trail = tmppt0;
-      }
-      
-      tmppt1 = (Trail *)emalloc((ndpth+2)*sizeof(Trail));
-      if(tmppt1)
-      {
-          memcpy(tmppt1,trail,(MAX_TRAIL + 10)*sizeof(Trail));
-          efree(trail,(MAX_TRAIL + 2)*sizeof(Trail));
-          trpt_par[1] = tmppt1+(trpt_par[1] - trail);
-          trail = tmppt1;
-      }
-      
+
+/*wyy_beg*/
+       tmppt0 = (Trail *)emalloc((ndpth+2)*sizeof(Trail));
+       if(tmppt0)
+       {
+           memcpy(tmppt0,trail,(MAX_TRAIL + 10)*sizeof(Trail));
+           efree(trail,(MAX_TRAIL + 2)*sizeof(Trail));
+           trpt_par[0] = tmppt0+(trpt_par[0]-trail);
+           trail = tmppt0;
+       }
+
+       tmppt1 = (Trail *)emalloc((ndpth+2)*sizeof(Trail));
+       if(tmppt1)
+       {
+           memcpy(tmppt1,trail,(MAX_TRAIL + 10)*sizeof(Trail));
+           efree(trail,(MAX_TRAIL + 2)*sizeof(Trail));
+           trpt_par[1] = tmppt1+(trpt_par[1]-trail);
+           trail = tmppt1;
+       }
       MAX_TRAIL = ndpth;
       return 1;
     }
@@ -1305,117 +1293,112 @@ init_structures()
 char *
 addr_current_state()
 {
-    printf("now:_nr_pr=%d,_nr_qs=%d,_p_t=%d,_a_t=%d,x=%d,y=%d,sv=%d\n",now._nr_pr,now._nr_qs,now._p_t,now._a_t,now.x,now.y,now.sv[0]);
   return ((char *)&now);
 }
 
-execute(tr,fo,flag_par)//flag_par = (-1:trpt,gid:trpt_par[gid])
+/*flag_par = (-1:trpt,gid:trpt_par[gid])*/
+execute(tr,fo,flag_par)
      TRANS *tr;
      FILE  *fo;
      int flag_par;
 {
-    Trans *t;
-    uchar ot;
-    short tt;
-    short nb_trans=0;
+  Trans *t;
+  uchar ot;
+  short tt;
+  short nb_trans=0;
 
-    switch((*tr).n.type)
+  switch((*tr).n.type)
     {
-        case NORMAL_type:
-            exec((*tr).n.tr,(*tr).n.pr,1,fo,flag_par);
-            nb_trans++;
-            break;
-        case ATOMIC_type:
-            II=(*tr).n.pr;
-            this = pptr(II); 
-            ot = (uchar) ((P0 *)this)->_t; 
-            exec((*tr).n.tr,II,1,fo,flag_par);
-            nb_trans++;
-            do{
-                tt = (short) ((P0 *)this)->_p; 
-                for(t=trans[ot][tt];t;t=t->nxt)
-                    if(precond(t))
-                    {
-                        exec(t,II,1,fo,flag_par);
-                        nb_trans++;
-                        break;
-                    }
-                if(!t)
-                    Uerror("atomic sequence block");
-            }while(t->atom&2);
-            break;
-        case RDV_type:
-            exec((*tr).rdv.tr,(*tr).rdv.pr,1,fo,flag_par);
-            nb_trans++;
-            exec((*tr).rdv.rcv_tr,(*tr).rdv.rcv_pr,1,fo,flag_par);
-            nb_trans++;
-            break;
-        default:
-            Uerror("bad transition type");
-            break;
+    case NORMAL_type:
+      exec((*tr).n.tr,(*tr).n.pr,1,fo,flag_par);
+      nb_trans++;
+      break;
+    case ATOMIC_type:
+      II=(*tr).n.pr;
+      this = pptr(II); 
+      ot = (uchar) ((P0 *)this)->_t; 
+      exec((*tr).n.tr,II,1,fo,flag_par);
+      nb_trans++;
+      do{
+	tt = (short) ((P0 *)this)->_p; 
+	for(t=trans[ot][tt];t;t=t->nxt)
+	  if(precond(t))
+	    {
+	      exec(t,II,1,fo,flag_par);
+	      nb_trans++;
+	      break;
+	    }
+	if(!t)
+	  Uerror("atomic sequence block");
+      }while(t->atom&2);
+      break;
+    case RDV_type:
+      exec((*tr).rdv.tr,(*tr).rdv.pr,1,fo,flag_par);
+      nb_trans++;
+      exec((*tr).rdv.rcv_tr,(*tr).rdv.rcv_pr,1,fo,flag_par);
+      nb_trans++;
+      break;
+    default:
+      Uerror("bad transition type");
+      break;
     }
-    //wyy_beg
-    //      trpt->nb_trans=nb_trans;
-    if(flag_par == -1)
-        trpt->nb_trans=nb_trans;
-    else 
-    {
-        trpt_par[flag_par]->nb_trans = nb_trans;
-        trpt->nb_trans=nb_trans;
-    }
-    //wyy_end
+   if(flag_par == -1)
+       trpt->nb_trans=nb_trans;
+   else
+   {
+       trpt_par[flag_par]->nb_trans = nb_trans;
+       trpt->nb_trans = nb_trans;
+   }
 }
 
-backtr(fo,flag_par)//flag_par(-1:trpt,gid:trpt_par[gid])
+backtr(fo,flag_par)
 {
-    Trans *t;
-    short i;
-    short nb_trans;
-    if(flag_par == -1)
-        nb_trans = trpt->nb_trans;
-    else
-        nb_trans = trpt_par[flag_par]->nb_trans;
+  Trans *t;
+  short i;
+   short nb_trans;
+   if(flag_par == -1)
+       nb_trans = trpt->nb_trans;
+   else
+       nb_trans = trpt_par[flag_par]->nb_trans;
 
-//    printf("******backtr:nb_trans=%d******\n");
-    for(i=0;i<nb_trans;i++)
-    {
-        if(flag_par == -1)
-        {
-            t  = trpt->o_t; 
-            ot = trpt->o_ot; 
-            II = trpt->pr;
-            tt = trpt->o_tt; 
-        }
-        else
-        {
-            t  = trpt_par[flag_par]->o_t; 
-            ot = trpt_par[flag_par]->o_ot; 
-            II = trpt_par[flag_par]->pr;
-            tt = trpt_par[flag_par]->o_tt; 
-        }
-        this = pptr(II);
-        ((P0 *)this)->_p=tt;
-        if(t->forw==13) 
-        { 
-            printf("backtr:t->forw=%d\n",t->forw);
-        }
-        //back(t,flag_par);
-        back(t,flag_par);
-        //wyy_beg
-        printf("backtr:t->back:%d,backtr:trpt=%s\n",t->back,t->tp);
-        if(flag_par == -1)
-            trpt--;
-        else
-            trpt_par[flag_par]--;
-
-        /*if(fo!=NULL)
-          {
-          fprintf(fo,"Back %d:proc %d (%s) back trans %d (%s)\n",depth,II,
-          procname[ot],t->forw,t->tp);
-          fflush(fo);
-          }*/
+  for(i=0;i<nb_trans;i++)
+   {
+       if(flag_par == -1)
+       {
+           t  = trpt->o_t; 
+           ot = trpt->o_ot;
+           II = trpt->pr;
+           tt = trpt->o_tt;
+       }
+       else
+       {
+           t  = trpt_par[flag_par]->o_t; 
+           ot = trpt_par[flag_par]->o_ot;
+           II = trpt_par[flag_par]->pr;
+           tt = trpt_par[flag_par]->o_tt;
+       }
+       this = pptr(II);
+      ((P0 *)this)->_p=tt;
+		if(t->forw==13) 
+		{ 
+			printf("backtr:t->forw=%d\n",t->forw);
+		} 
+      back(t);
+       printf("backtr:t->back:%d,backtr:trpt = %s\n",t->back,t->tp);
+       if(flag_par == -1)
+           trpt--;
+       else
+           trpt_par[flag_par]--;
+      /*if(fo!=NULL)
+	{
+	  fprintf(fo,"Back %d:proc %d (%s) back trans %d (%s)\n",depth,II,
+		  procname[ot],t->forw,t->tp);
+	  fflush(fo);
+	}*/
     }
 }
+
+
 
 
 
@@ -1425,220 +1408,230 @@ nb_proc()
   return(now._nr_pr);
 }
 
-short
+/*wyy_beg*/short
 tr_def_in(int flag_par)
 {
-    uchar flag;
-    short i=0;
-    short j,tmp_II;
-    Trans *t,*tmp_t;
-    TRANS *tr_;
-    short tmp_boq;
-    Rtrans_rdv rdv;
-    short res=0;
-    uchar lot;
-    short ltt,lII;
+  uchar flag;
+  short i=0;
+  short j,tmp_II;
+  Trans *t,*tmp_t;
+  TRANS *tr_;
+  short tmp_boq;
+  Rtrans_rdv rdv;
+  short res=0;
+  uchar lot;
+  short ltt,lII;
 
-    boq=-1;
-    if(flag_par == -1)
+  boq=-1;
+   if(flag_par == -1)
+   {
+       tmp_trpt = trpt;
+       trpt = trans_def_trail;
+   }
+   else
+   {
+       tmp_trpt = trpt_par[flag_par];
+       trpt_par[flag_par] = trans_def_trail;
+   }
+  for(lII=now._nr_pr-1;lII>=0;lII--) 
     {
-        tmp_trpt = trpt;
-        trpt = trans_def_trail;
-    }
-    else
-    {
-        tmp_trpt = trpt_par[flag_par];
-        trpt_par[flag_par] = trans_def_trail;
-    }
-   // printf("tr_def_in(): trans_def_trail:%s,t->back=%d\n",(trans_def_trail)->o_t->tp,(trans_def_trail)->o_t->back);
-    for(lII=now._nr_pr-1;lII>=0;lII--) 
-    {
-        P_size[lII]=0;
-        this=pptr(lII);
-        ltt=(short) ((P0 *)this)->_p;
-        lot=(uchar) ((P0 *)this)->_t;
-        t=trans[lot][ltt];
-        //wyy_beg
-        printf("trans[%d][%d]=%s\n",lot,ltt,t->tp);
-        //wyy_end
-        for(j=i=0;t;t=t->nxt,j++) 
-        {
-            switch(t->rtype)
-            {
-                case ATOMIC_type:
-                    tmp_t=t;
-                    flag=0;
-                    tr_=(TRANS *) &rtrans[lII][ltt][j];
-                    trans_def[lII][i].tr=tr_;
-                    if(precond(t))
-                        do
-                        {
-                            exec(t,lII,0,0,flag_par);
-                            tt=(short) ((P0 *)this)->_p;
-                            flag=0;
-                            fflush(stdout);
-                            for(t=trans[lot][tt];t;t=t->nxt)
-                            {
-                                if(precond(t))
-                                {
-                                    flag=1;
-                                    break;
-                                }
-                            }
-                            if(!flag)
-                                Uerror("atomic sequence block\n");
-                        } while(flag && (t->atom&2));
-                    if(flag) exec(t,lII,0,0,flag_par);
-                    t=tmp_t;
-                    if(flag)
-                    {
-                        trans_def[lII][i].enabled=1;
-                        res++;
-                        trans_def[lII][i].in_stack=is_in_stack();
+        printf("lII = %d  ",lII);
+      P_size[lII]=0;
+      this=pptr(lII);
+      ltt=(short) ((P0 *)this)->_p;
+      lot=(uchar) ((P0 *)this)->_t;
+      t=trans[lot][ltt];
+       printf("trans[%d][%d] = %s\n",lot,ltt,t->tp);
+
+      for(j=i=0;t;t=t->nxt,j++) 
+	    {
+	        switch(t->rtype)
+	        {
+	             case ATOMIC_type:
+	             tmp_t=t;
+          	     flag=0;
+	            tr_=(TRANS *) &rtrans[lII][ltt][j];
+	            trans_def[lII][i].tr=tr_;
+                /*wyy_beg*/
+                printf("trans_def[%d][%d] :%s\n",lII,i,trans_def[lII][i].tr->n.tr->tp);
+	            if(precond(t))
+		        do
+		        {
+		            exec(t,lII,0,0,flag_par);
+		             tt=(short) ((P0 *)this)->_p;
+       		    flag=0;
+       		    fflush(stdout);
+       		    for(t=trans[lot][tt];t;t=t->nxt)
+	        	      {
+           			if(precond(t))
+           			  {
+           			    flag=1;
+           			    break;
+           			  }
+       		      }
+	        	    if(!flag)
+		                 Uerror("atomic sequence block\n");
+       		  } while(flag && (t->atom&2));
+   	       if(flag) exec(t,lII,0,0,flag_par);
+   	       t=tmp_t;
+
+ if(flag)
+	{
+		  trans_def[lII][i].enabled=1;
+		  res++;
+		  trans_def[lII][i].in_stack=is_in_stack();
 #ifdef SLEEP
-                        if(is_sleeping(trans_def[lII][i].tr))
-                            trans_def[lII][i].in_sleep=1;
-                        else
-                        {
-                            trans_def[lII][i].in_sleep=0;
-                            P_size[lII]++;
-                        }
+		  if(is_sleeping(trans_def[lII][i].tr))
+		    trans_def[lII][i].in_sleep=1;
+		  else
+		    {
+		      trans_def[lII][i].in_sleep=0;
+		      P_size[lII]++;
+		    }
 #else
-                        P_size[lII]++;
+		  P_size[lII]++;
 #endif
-                    }
-                    else
-                    {
-                        trans_def[lII][i].enabled=0;
-                        trans_def[lII][i].in_stack=0;
-                        trans_def[lII][i].in_sleep=0;
-                    }
-                    undo_all_trans(flag_par);
-                    i++;
-                    break;
-
-                case NORMAL_type:
-                    if(is_rdv(t))
-                    {
-                        rdv.type=RDV_type;
-                        rdv.pr=lII;
-                        rdv.tr=t;
-                        if(precond(t))
-                        {
-                            exec(t,lII,0,0,flag_par);
-                            if(boq==-1) Uerror("boq\n");
-                            tmp_II=lII;tmp_t=t; tmp_boq=boq;
-
-                            for(lII=nb_proc()-1;lII>=0;lII--)
-                            {
-                                if(lII==tmp_II)
-                                    continue;
-                                this=pptr(lII);
-                                tt=(short) ((P0 *)this)->_p;
-                                lot=(uchar) ((P0 *)this)->_t;
-                                for(t=trans[lot][tt];t;t=t->nxt)
-
-                                    if(precond(t))
-                                    {
-
-                                        exec(t,lII,0,0,flag_par);
-                                        rdv.rcv_tr=t;
-                                        rdv.rcv_pr=lII;
-                                        trans_def[tmp_II][i].enabled=1;
-                                        res++;
-                                        trans_def[tmp_II][i].in_stack=is_in_stack();
+		}
+	      else
+		{
+		  trans_def[lII][i].enabled=0;
+		  trans_def[lII][i].in_stack=0;
+		  trans_def[lII][i].in_sleep=0;
+		}
+	      undo_all_trans(flag_par);
+	      i++;
+	      break;
+	      
+	    case NORMAL_type:
+	      if(is_rdv(t))
+		{
+		  rdv.type=RDV_type;
+		  rdv.pr=lII;
+		  rdv.tr=t;
+		  if(precond(t))
+		    {
+		      exec(t,lII,0,0,flag_par);
+		      if(boq==-1) Uerror("boq\n");
+		      tmp_II=lII;tmp_t=t; tmp_boq=boq;
+		      
+		      for(lII=nb_proc()-1;lII>=0;lII--)
+			{
+			  if(lII==tmp_II)
+			    continue;
+			  this=pptr(lII);
+			  tt=(short) ((P0 *)this)->_p;
+			  lot=(uchar) ((P0 *)this)->_t;
+			  for(t=trans[lot][tt];t;t=t->nxt)
+			    
+			    if(precond(t))
+			      {
+				
+				exec(t,lII,0,0,flag_par);
+				rdv.rcv_tr=t;
+				rdv.rcv_pr=lII;
+				trans_def[tmp_II][i].enabled=1;
+				res++;
+				trans_def[tmp_II][i].in_stack=is_in_stack();
 #ifdef SLEEP
-                                        if(is_sleeping((TRANS *)&rdv))
-                                            trans_def[tmp_II][i].in_sleep=1;
-                                        else
-                                        {
-                                            trans_def[tmp_II][i].in_sleep=0;
-                                            P_size[tmp_II]++;
-                                        }
+				if(is_sleeping((TRANS *)&rdv))
+				  trans_def[tmp_II][i].in_sleep=1;
+				else
+				  {
+				    trans_def[tmp_II][i].in_sleep=0;
+				    P_size[tmp_II]++;
+				  }
 #else
-                                        P_size[tmp_II]++;
+				P_size[tmp_II]++;
 #endif
+				
+				trans_def[tmp_II][i++].tr=
+				  add_new_trans((TRANS *)&rdv);
+                /*wyy_beg*/
+              printf("trans_def[%d][%d] :%s\n",lII,i,trans_def[lII][i].tr->n.tr->tp);
 
-                                        trans_def[tmp_II][i++].tr=
-                                            add_new_trans((TRANS *)&rdv);
-
-                                        rdv.type=RDV_type;
-                                        rdv.pr=tmp_II;
-                                        rdv.tr=tmp_t;
-                                        undo_one_trans(flag_par);
-                                        boq=tmp_boq;
-                                    }
-                            }
-                            boq=-1;
-                            lII=tmp_II;t=tmp_t;
-                            rdv.rcv_tr=0;
-                            rdv.rcv_pr=0;
-                            trans_def[lII][i].tr=
-                                add_new_trans((TRANS *)&rdv);
-                            trans_def[lII][i].enabled=0;
-                            trans_def[lII][i].in_stack=0;
-                            trans_def[lII][i].in_sleep=0;
-                        }
-                        else
-                        {
-                            rdv.rcv_tr=0;
-                            rdv.rcv_pr=0;
-                            trans_def[lII][i].tr=
-                                add_new_trans((TRANS *)&rdv);
-                            trans_def[lII][i].enabled=0;
-                            trans_def[lII][i].in_stack=0;
-                            trans_def[lII][i].in_sleep=0;
-                        }
-                    }
-                    else
-                    {
-                        trans_def[lII][i].tr=(TRANS *) &rtrans[lII][ltt][j];
-                        if(precond(t))
-                        {
-                            trans_def[lII][i].enabled=1;
-                            res++;
-                            exec(t,lII,0,0,flag_par);
-                          //printf("trans_def[%d][%d]=%s\n",lII,i,trans_def[lII][i].tr->n.tr->tp);
-                            trans_def[lII][i].in_stack=is_in_stack();
+				rdv.type=RDV_type;
+				rdv.pr=tmp_II;
+				rdv.tr=tmp_t;
+				undo_one_trans(flag_par);
+				boq=tmp_boq;
+			      }
+			}
+		      boq=-1;
+		      lII=tmp_II;t=tmp_t;
+		      rdv.rcv_tr=0;
+		      rdv.rcv_pr=0;
+		      trans_def[lII][i].tr=
+			add_new_trans((TRANS *)&rdv);
+              /*wyy_beg*/
+              printf("trans_def[%d][%d] :%s\n",lII,i,trans_def[lII][i].tr->n.tr->tp);
+		      trans_def[lII][i].enabled=0;
+		      trans_def[lII][i].in_stack=0;
+		      trans_def[lII][i].in_sleep=0;
+		    }
+		  else
+		    {
+		      rdv.rcv_tr=0;
+		      rdv.rcv_pr=0;
+		      trans_def[lII][i].tr=
+			add_new_trans((TRANS *)&rdv);
+              /*wyy_beg*/
+              printf("trans_def[%d][%d] :%s\n",lII,i,trans_def[lII][i].tr->n.tr->tp);
+		      trans_def[lII][i].enabled=0;
+		      trans_def[lII][i].in_stack=0;
+		      trans_def[lII][i].in_sleep=0;
+		    }
+		}
+	      else
+		{
+		  trans_def[lII][i].tr=(TRANS *) &rtrans[lII][ltt][j];
+          /*wyy_beg*/
+            printf("trans_def[%d][%d] :%s\n",lII,i,trans_def[lII][i].tr->n.tr->tp);
+		  if(precond(t))
+		    {
+		      trans_def[lII][i].enabled=1;
+		      res++;
+		      exec(t,lII,0,0,flag_par);
+		      trans_def[lII][i].in_stack=is_in_stack();
 #ifdef SLEEP
-                            if(is_sleeping(trans_def[lII][i].tr))
-                                trans_def[lII][i].in_sleep=1;
-                            else
-                            {
-                                trans_def[lII][i].in_sleep=0;
-                                P_size[lII]++;
-                            }
+		      if(is_sleeping(trans_def[lII][i].tr))
+			trans_def[lII][i].in_sleep=1;
+		      else
+			{
+			  trans_def[lII][i].in_sleep=0;
+			  P_size[lII]++;
+			}
 #else
-                            P_size[lII]++;
+		      P_size[lII]++;
 #endif
-                        }
-                        else
-                        {
-                            trans_def[lII][i].enabled=0;
-                            trans_def[lII][i].in_stack=0;
-                            trans_def[lII][i].in_sleep=0;
-                        }
-                    }
-                    undo_all_trans(flag_par);
-                    i++;
-                    break;
-
-                default:
-                    Uerror("bad type of transition");
-            }//end switch
-        }//end for
-        if(i>=MAX_TRANS_DEF)
-            Uerror("MAX_TRANS_DEF too small, try a greater value\n");
-        trans_def[lII][i].tr=0;
-    }
-    if(flag_par == -1)
-        trpt=tmp_trpt;
-    else
-        trpt_par[flag_par] = tmp_trpt;
-    tmp_trpt=0;
-    return res;
+		    }
+		  else
+		    {
+		      trans_def[lII][i].enabled=0;
+		      trans_def[lII][i].in_stack=0;
+		      trans_def[lII][i].in_sleep=0;
+		    }
+		}
+	      undo_all_trans(flag_par);
+	      i++;
+	      break;
+	      
+	    default:
+	      Uerror("bad type of transition");
+	    }//end switch
+	}//end for
+   if(i>=MAX_TRANS_DEF)
+	    Uerror("MAX_TRANS_DEF too small, try a greater value\n");
+   trans_def[lII][i].tr=0;
+   }
+   if(flag_par == -1)
+       trpt=tmp_trpt;
+   else
+       trpt_par[flag_par] = tmp_trpt;
+  tmp_trpt=0;
+  return res;
 }
 
+/*wyy_beg*/
 short
 trans_def_in(int flag_par)
 {
@@ -1652,6 +1645,7 @@ trans_def_in(int flag_par)
     }
   return nb_tr_enabled;  
 }
+/*wyy_end*/
 
 addpr(acc)
      ACC acc;
@@ -2310,46 +2304,43 @@ unrecv(from, slot, fld, fldvar, strt)
 	default: Uerror("bad queue - qrecv");
 	}
 }
-
 deleted_trail(int flag_par)
 {
-    int k = 0;
-    while(trpt_par[flag_par]->o_t)
-    {
-        k++;
-        trpt_cp[flag_par]++;
-        trpt_cp[flag_par] = trpt_par[flag_par];
-        printf("trpt_cp:%s, trpt_cp=%p,trpt_par=%p\n",trpt_cp[flag_par]->o_t->tp,trpt_cp[flag_par],trpt_par[flag_par]);
-        trpt_par[flag_par]--;
-        trpt--;
-    }
-    printf("deleted_trail:copy loop  = %d\n",k);
+   int k = 0;
+   while(trpt_par[flag_par]->o_t)
+   {
+       k++;
+       trpt_cp[flag_par]++;
+       trpt_cp[flag_par] = trpt_par[flag_par];
+       printf("trpt_cp:%s, trpt_cp=%p,trpt_par=%p\n",trpt_cp[flag_par]->o_t->tp,trpt_cp[flag_par],trpt_par[flag_par]);
+       trpt_par[flag_par]--;
+       trpt--;
+   }
+   printf("deleted_trail:copy loop  = %d\n",k);
 }
-
 copy_trail(int groupnum)
 {
-    int k = 0;
-    int i = 0;
-    for(; i < groupnum; i++)
-    {
-        while(trpt_cp[i]->o_t)
-        {
-            k++;
-            trpt++;
-            // *trpt = *trpt_cp;
-            trpt->pr = trpt_cp[i]->pr;
-            trpt->st = trpt_cp[i]->st;
-            trpt->nb_trans = trpt_cp[i]->nb_trans;
-            trpt->o_ot = trpt_cp[i]->o_ot;
-            trpt->tau = trpt_cp[i]->tau;
-            trpt->o_tt = trpt_cp[i]->o_tt;
-            trpt->o_t = trpt_cp[i]->o_t;
-            trpt->oval = trpt_cp[i]->oval;
-            printf("copy_trail:%s=%p\n",trpt_cp[i]->o_t->tp,trpt_cp[i]->oval);
-            trpt->prog = trpt_cp[i]->prog;
-            printf("trpt:%s trpt=%p,trpt_cp=%p\n",trpt->o_t->tp,trpt,trpt_cp[i]);
-            trpt_cp[i]++;
-        }
-    }
-    printf("copy_trail:number of loop = %d\n",k);
+   int k = 0;
+   int i = 0;
+   for(; i < groupnum; i++)
+   {
+       while(trpt_cp[i]->o_t)
+       {
+           k++;
+           trpt++;
+           trpt->pr = trpt_cp[i]->pr;
+           trpt->st = trpt_cp[i]->st;
+           trpt->nb_trans = trpt_cp[i]->nb_trans;
+           trpt->o_ot = trpt_cp[i]->o_ot;
+           trpt->tau = trpt_cp[i]->tau;
+           trpt->o_tt = trpt_cp[i]->o_tt;
+           trpt->o_t = trpt_cp[i]->o_t;
+           trpt->oval = trpt_cp[i]->oval;
+           printf("copy_trail:%s=%p\n",trpt_cp[i]->o_t->tp,trpt_cp[i]->oval);
+           trpt->prog = trpt_cp[i]->prog;
+           printf("trpt:%s trpt=%p,trpt_cp=%p\n",trpt->o_t->tp,trpt,trpt_cp[i]);
+           trpt_cp[i]++;
+       }
+   }
+   printf("copy_trail:number of loop = %d\n",k);
 }

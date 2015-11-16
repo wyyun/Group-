@@ -906,12 +906,18 @@ int blocked(TRANS_DEF trans_def)
     Trans *t2 = ((*t1).n).tr;
     int gid = t2->gid;
     int pid = t2->pid;
+    printf("gid = %d,pid = %d\n",gid,pid);
     if(gid>-1)
     {
         int ind = get_index(gid,pid);
         GROUP_INFO *group_info = (GROUP_INFO*)(dfs_group->group_info);
         if(group_info[gid].blocked[ind])
+        {
+            printf("group[%d][%d].blocked = 1\n",gid,ind);
             return 1;
+        }
+        else
+            printf("group[%d][%d].blocked = 0\n",gid,ind);
     }
     return 0;
 }
@@ -1164,6 +1170,7 @@ End_:
 Sel:
     for(II=0;II<nb_proc();II++)//选择各线程中的transitions存储在stpt栈中
     {
+        printf("II = %d  ",II);
         if(!is_set(P_set,II))
         {
             continue;
@@ -1182,6 +1189,7 @@ Sel:
                     if(!blocked(trans_def[II][i]))
                     {
 #endif
+                        printf("i = %d\n",i);
                         if(!select_flag)
                         {
                             *(++stpt)=trans_def[II][i].tr;
@@ -1189,6 +1197,8 @@ Sel:
                             fprintf(result,"trans_def[%d][%d]:%s\t",II,i,trans_def[II][i].tr->n.tr->tp);
 
                             printf("stpt:%s,stpt_ind:%d\t",(*stpt)->n.tr->tp,stpt_ind);
+                            /* printf("stpt:%s,",(*stpt)->n.tr->tp);
+                            printf("stpt_ind:%d\t",stpt_ind); */
                             fprintf(result,"stpt:%s,stpt_ind:%d\t",(*stpt)->n.tr->tp,stpt_ind);
 
                             printf("type:%d,",(*stpt)->n.type);
